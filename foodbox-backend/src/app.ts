@@ -3,6 +3,9 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 
+import adminRoutes from "./modules/admin/admin.route.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
+
 const app = express();
 
 app.use(cors());
@@ -19,5 +22,9 @@ app.get("/health", (_, res) => {
     message: "Server Running"
   });
 });
+
+app.use("/api/admin", adminRoutes);
+
+app.use(errorHandler);
 
 export default app;
