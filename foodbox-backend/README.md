@@ -255,4 +255,4 @@ Runs the compiled production build.
 
 ---
 
-Built as a learning-focused production-style backend for a Cloud Kitchen POS system.
+Built as a production-style backend for a Cloud Kitchen POS system.
