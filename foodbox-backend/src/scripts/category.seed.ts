@@ -1,6 +1,4 @@
-import mongoose from "mongoose";
-
-import { env } from "../config/env.js";
+import { connectDB } from "../config/db.js";
 import { CategoryModel } from "../modules/category/category.model.js";
 
 const categories = [
@@ -44,7 +42,7 @@ const categories = [
 
 const seedCategories = async () => {
   try {
-    await mongoose.connect(env.MONGO_URI);
+    await connectDB();
 
     await CategoryModel.deleteMany({});
 
