@@ -26,6 +26,7 @@ const adminSchema = new Schema<AdminEntity>(
     password: {
       type: String,
       required: [true, "Password is required"],
+      select: false,
     },
 
     role: {

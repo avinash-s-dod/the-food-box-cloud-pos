@@ -221,9 +221,10 @@ Runs the compiled production build.
 
 ## Phase 2
 
-* [ ] Admin Authentication
-* [ ] JWT Middleware
-* [ ] Seed Admin
+* [x] Admin Authentication
+* [x] JWT Middleware
+* [x] Seed Admin
+* [x] Admin Login/Profile API
 
 ## Phase 3
 
