@@ -8,19 +8,28 @@ export const authMiddleware = (allowedRoles: string[]) => {
       const authHeader = req.headers.authorization;
 
       if (!authHeader?.startsWith("Bearer ")) {
-        throw new Error("Unauthorized");
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized Access",
+        });
       }
 
       const token = authHeader.split(" ")[1];
 
       if (!token) {
-        throw new Error("Unauthorized");
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized Access",
+        });
       }
 
       const decoded = verifyToken(token);
 
       if (!allowedRoles.includes(decoded.role)) {
-        throw new Error("Forbidden");
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden",
+        });
       }
 
       req.user = decoded;
