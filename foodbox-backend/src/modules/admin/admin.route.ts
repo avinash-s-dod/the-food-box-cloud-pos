@@ -8,4 +8,4 @@ router.post("/login", AdminController.login);
 
 router.get("/profile", authMiddleware(["ADMIN"]), AdminController.profile);
 
-export default router;
+export { router as AdminRouter };

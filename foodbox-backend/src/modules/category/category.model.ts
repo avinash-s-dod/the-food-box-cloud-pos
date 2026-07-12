@@ -1,4 +1,4 @@
-import {Schema,model} from "mongoose";
+import { Schema, model } from "mongoose";
 import type { Category } from "./category.types.js";
 
 const categorySchema = new Schema<Category>(
@@ -10,6 +10,7 @@ const categorySchema = new Schema<Category>(
     },
     description: {
       type: String,
+      trim: true,
     },
     image: {
       type: String,
