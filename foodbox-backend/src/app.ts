@@ -3,8 +3,9 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 
-import adminRoutes from "./modules/admin/admin.route.js";
-import categoryRoutes from "./modules/category/category.route.js";
+import { AdminRouter } from "./modules/admin/admin.route.js";
+import { CategoryRouter } from "./modules/category/category.route.js";
+import { MenuRouter } from "./modules/menu/menu.route.js";
 
 import { errorHandler } from "./middlewares/error.middleware.js";
 
@@ -25,9 +26,9 @@ app.get("/health", (_, res) => {
   });
 });
 
-app.use("/api/admin", adminRoutes);
-
-app.use("/api/categories", categoryRoutes);
+app.use("/api/admin", AdminRouter);
+app.use("/api/categories", CategoryRouter);
+app.use("/api/menu", MenuRouter);
 
 app.use(errorHandler);
 

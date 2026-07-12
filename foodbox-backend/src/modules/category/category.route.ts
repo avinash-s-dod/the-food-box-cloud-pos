@@ -11,4 +11,4 @@ router.get("/:id", CategoryController.getCategoryById);
 router.put("/:id", authMiddleware(["ADMIN"]), CategoryController.updateCategoryById);
 router.delete("/:id", authMiddleware(["ADMIN"]), CategoryController.deleteCategoryById);
 
-export default router;
+export { router as CategoryRouter };

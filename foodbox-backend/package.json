@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "seed:admin": "tsx src/scripts/seed-admin.ts",
+    "seed:admin": "tsx src/scripts/admin.seed.ts",
     "seed:category": "tsx src/scripts/category.seed.ts"
   },
   "keywords": [],
@@ -31,7 +31,7 @@
     "express": "^5.2.1",
     "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.7.3",
+    "mongoose": "^8.19.1",
     "morgan": "^1.11.0",
     "zod": "^4.4.3"
   }
