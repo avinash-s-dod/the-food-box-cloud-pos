@@ -57,42 +57,50 @@ The backend powers multiple clients from a single API:
 # Project Structure
 
 ```text
-src/
-
+├── src/
 ├── config/
-│   ├── db.ts                 # MongoDB connection
-│   └── env.ts                # Environment configuration
+│   ├── db.ts                    # MongoDB connection
+│   └── env.ts                   # Environment configuration
+│
+├── middleware/
+│   ├── auth.middleware.ts       # Authentication & Role Authorization
+│   ├── error.middleware.ts      # Global Error Handler
+│   └── validate.middleware.ts   # (Planned)
 │
 ├── modules/
 │   ├── admin/
-│   │   ├── admin.model.ts
 │   │   ├── admin.controller.ts
-│   │   ├── admin.service.ts
+│   │   ├── admin.model.ts
 │   │   ├── admin.route.ts
 │   │   ├── admin.schema.ts
+│   │   ├── admin.service.ts
 │   │   └── admin.types.ts
 │   │
-│   ├── menu/
+│   ├── category/
+│   │   ├── category.controller.ts
+│   │   ├── category.model.ts
+│   │   ├── category.route.ts
+│   │   ├── category.schema.ts
+│   │   ├── category.service.ts
+│   │   └── category.types.ts
 │   │
-│   └── order/
+│   ├── menu/                    
+│   ├── order/                   
+│   └── invoice/                 
 │
-├── middleware/
-│   ├── auth.middleware.ts
-│   ├── validate.middleware.ts
-│   └── error.middleware.ts
+├── seed/
+│   ├── admin.seed.ts
+│   └── category.seed.ts
+│
+├── types/
+│   └── express.d.ts             # Express Request type extensions
 │
 ├── utils/
-│   ├── jwt.ts
-│   ├── response.ts
-│   └── logger.ts
-│
-├── scripts/
-│   └── seed-admin.ts
+│   └── jwt.ts
 │
 ├── app.ts
 └── server.ts
 ```
-
 ---
 
 # Architecture
@@ -228,7 +236,9 @@ Runs the compiled production build.
 
 ## Phase 3
 
-* [ ] Menu CRUD APIs
+* [x] Category CRUD APIs
+* [x] Seed Categories
+* [x] Menu CRUD APIs
 
 ## Phase 4
 

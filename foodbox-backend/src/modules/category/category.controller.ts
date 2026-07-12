@@ -14,6 +14,7 @@ const createCategory = async (
   next: NextFunction,
 ) => {
   try {
+    
     const payload = createCategorySchema.parse(req.body);
     const category = await CategoryService.createCategory(payload);
 
