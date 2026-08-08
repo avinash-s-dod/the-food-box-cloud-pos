@@ -8,26 +8,20 @@ import {
 } from "./orders.types.js";
 import { AppError } from "../../common/AppError.js";
 import { catchAsync } from "../../common/catchAsync.js";
+import { sendResponse } from "../../common/sendResponse.js";
 
 const createOrder = catchAsync(async (req, res) => {
   const payload = createOrderSchema.parse(req.body);
   const order = await OrderService.createOrder(payload);
 
-  return res.status(201).json({
-    success: true,
-    message: "Order created successfully",
-    data: order,
-  });
+  return sendResponse(res, 201, "Order created successfully", order);
 });
 
 const getOrders = catchAsync<QueryParams>(async (req, res) => {
   const queryParams = req.query;
   const orders = await OrderService.getOrders(queryParams);
-  return res.status(200).json({
-    success: true,
-    message: "Orders fetched successfully",
-    data: orders,
-  });
+
+  return sendResponse(res, 200, "Orders fetched successfully", orders);
 });
 
 const getOrderById = catchAsync<OrderParams>(async (req, res) => {
@@ -39,11 +33,7 @@ const getOrderById = catchAsync<OrderParams>(async (req, res) => {
 
   const order = await OrderService.getOrderById(id);
 
-  return res.status(200).json({
-    success: true,
-    message: "Order fetched successfully",
-    data: order,
-  });
+  return sendResponse(res, 200, "Order fetched successfully", order);
 });
 
 const updateOrderStatus = catchAsync<OrderUpdateParams>(async (req, res) => {
@@ -57,11 +47,7 @@ const updateOrderStatus = catchAsync<OrderUpdateParams>(async (req, res) => {
 
   const order = await OrderService.updateOrderStatus(id, orderStatus);
 
-  return res.status(200).json({
-    success: true,
-    message: "Order status updated successfully",
-    data: order,
-  });
+  return sendResponse(res, 200, "Order status updated successfully", order);
 });
 
 const cancelOrder = catchAsync<OrderParams>(async (req, res) => {
@@ -73,11 +59,7 @@ const cancelOrder = catchAsync<OrderParams>(async (req, res) => {
 
   const order = await OrderService.cancelOrder(id);
 
-  return res.status(200).json({
-    success: true,
-    message: "Order cancelled successfully",
-    data: order,
-  });
+  return sendResponse(res, 200, "Order cancelled successfully", order);
 });
 
 export const OrderController = {

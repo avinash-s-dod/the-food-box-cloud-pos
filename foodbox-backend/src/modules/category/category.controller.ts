@@ -7,26 +7,19 @@ import { CategoryService } from "./category.service.js";
 import type { CategoryParams } from "./category.types.js";
 import { AppError } from "../../common/AppError.js";
 import { catchAsync } from "../../common/catchAsync.js";
+import { sendResponse } from "../../common/sendResponse.js";
 
 const createCategory = catchAsync(async (req, res) => {
   const payload = createCategorySchema.parse(req.body);
   const category = await CategoryService.createCategory(payload);
 
-  return res.status(201).json({
-    status: "success",
-    message: "Category created successfully",
-    data: category,
-  });
+  return sendResponse(res, 201, "Category created successfully", category);
 });
 
 const getCategories = catchAsync(async (req, res) => {
   const categories = await CategoryService.getCategories();
 
-  return res.status(200).json({
-    status: "success",
-    message: "Categories fetched successfully",
-    data: categories,
-  });
+  return sendResponse(res, 200, "Categories fetched successfully", categories);
 });
 
 const getCategoryById = catchAsync<CategoryParams>(async (req, res) => {
@@ -38,11 +31,7 @@ const getCategoryById = catchAsync<CategoryParams>(async (req, res) => {
 
   const category = await CategoryService.getCategoryById(id);
 
-  return res.status(200).json({
-    success: true,
-    message: "Category fetched successfully",
-    data: category,
-  });
+  return sendResponse(res, 200, "Category fetched successfully", category);
 });
 
 const updateCategoryById = catchAsync<CategoryParams>(async (req, res) => {
@@ -56,11 +45,12 @@ const updateCategoryById = catchAsync<CategoryParams>(async (req, res) => {
 
   const updatedCategory = await CategoryService.updateCategoryById(id, payload);
 
-  return res.status(200).json({
-    success: true,
-    message: "Category updated successfully",
-    data: updatedCategory,
-  });
+  return sendResponse(
+    res,
+    200,
+    "Category updated successfully",
+    updatedCategory,
+  );
 });
 
 const deleteCategoryById = catchAsync<CategoryParams>(async (req, res) => {
@@ -72,11 +62,12 @@ const deleteCategoryById = catchAsync<CategoryParams>(async (req, res) => {
 
   const deletedCategory = await CategoryService.deleteCategoryById(id);
 
-  return res.status(200).json({
-    success: true,
-    message: "Category deleted successfully",
-    data: deletedCategory,
-  });
+  return sendResponse(
+    res,
+    200,
+    "Category deleted successfully",
+    deletedCategory,
+  );
 });
 
 export const CategoryController = {

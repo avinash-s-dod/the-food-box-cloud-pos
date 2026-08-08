@@ -4,25 +4,19 @@ import { MenuService } from "./menu.service.js";
 import type { MenuParams } from "./menu.types.js";
 import { AppError } from "../../common/AppError.js";
 import { catchAsync } from "../../common/catchAsync.js";
+import { sendResponse } from "../../common/sendResponse.js";
 
 const createMenu = catchAsync(async (req, res) => {
   const payload = createMenuSchema.parse(req.body);
   const menu = await MenuService.createMenu(payload);
 
-  return res.status(201).json({
-    success: true,
-    message: "Menu item created successfully",
-    data: menu,
-  });
+  return sendResponse(res, 201, "Menu item created successfully", menu);
 });
 
 const getMenus = catchAsync(async (req, res) => {
   const menus = await MenuService.getMenus();
-  return res.status(200).json({
-    success: true,
-    message: "Menus fetched successfully",
-    data: menus,
-  });
+
+  return sendResponse(res, 200, "Menus fetched successfully", menus);
 });
 
 const getMenuById = catchAsync<MenuParams>(async (req, res) => {
@@ -34,11 +28,7 @@ const getMenuById = catchAsync<MenuParams>(async (req, res) => {
 
   const menu = await MenuService.getMenuById(id);
 
-  return res.status(200).json({
-    success: true,
-    message: "Menu item fetched successfully",
-    data: menu,
-  });
+  return sendResponse(res, 200, "Menu item fetched successfully", menu);
 });
 
 const updateMenuById = catchAsync<MenuParams>(async (req, res) => {
@@ -51,11 +41,7 @@ const updateMenuById = catchAsync<MenuParams>(async (req, res) => {
   const payload = updateMenuSchema.parse(req.body);
   const updatedMenu = await MenuService.updateMenuById(id, payload);
 
-  return res.status(200).json({
-    success: true,
-    message: "Menu item updated successfully",
-    data: updatedMenu,
-  });
+  return sendResponse(res, 200, "Menu item updated successfully", updatedMenu);
 });
 
 const deleteMenuById = catchAsync<MenuParams>(async (req, res) => {
@@ -66,11 +52,7 @@ const deleteMenuById = catchAsync<MenuParams>(async (req, res) => {
   }
   const deletedMenu = await MenuService.deleteMenuById(id);
 
-  return res.status(200).json({
-    success: true,
-    message: "Menu item deleted successfully",
-    data: deletedMenu,
-  });
+  return sendResponse(res, 200, "Menu item deleted successfully", deletedMenu);
 });
 
 export const MenuController = {
