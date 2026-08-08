@@ -1,45 +1,28 @@
-import type { Request, Response, NextFunction } from "express";
-
 import { adminLoginSchema } from "./admin.schema.js";
 import { AdminService } from "./admin.service.js";
+import { catchAsync } from "../../common/catchAsync.js";
 
-const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const payload = adminLoginSchema.parse(req.body);
+const login = catchAsync(async (req, res) => {
+  const payload = adminLoginSchema.parse(req.body);
 
-    const result = await AdminService.loginAdmin(payload);
+  const result = await AdminService.loginAdmin(payload);
 
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return res.status(200).json({
+    success: true,
+    message: "Login successful",
+    data: result,
+  });
+});
 
-const profile = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const result = await AdminService.getProfile(req.user!.id);
+const profile = catchAsync(async (req, res) => {
+  const result = await AdminService.getProfile(req.user!.id);
 
-    return res.status(200).json({
-      success: true,
-      message: "Profile fetched successfully",
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return res.status(200).json({
+    success: true,
+    message: "Profile fetched successfully",
+    data: result,
+  });
+});
 
 export const AdminController = {
   login,
