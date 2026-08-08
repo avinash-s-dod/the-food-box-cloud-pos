@@ -43,11 +43,6 @@ export type OrderParams = {
   id: string;
 };
 
-export type OrderUpdateParams = {
-  id: string;
-  status: OrderStatus;
-};
-
 export interface OrderQueryParams extends BaseQueryParams {
   orderStatus?: OrderStatus;
   paymentStatus?: PaymentStatus;

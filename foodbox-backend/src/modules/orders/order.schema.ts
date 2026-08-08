@@ -47,3 +47,17 @@ export const updateOrderStatusSchema = z.object({
 });
 
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>;
+
+export const orderQuerySchema = z.object({
+  search: z.string().trim().optional(),
+  orderStatus: z.enum(OrderStatus).optional(),
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().optional(),
+  sort: z.string().optional(),
+});
+
+export const orderParamsSchema = z.object({
+  id: z.string().refine((value) => mongoose.Types.ObjectId.isValid(value), {
+    message: "Invalid order id",
+  }),
+});
