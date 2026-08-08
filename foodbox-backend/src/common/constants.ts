@@ -1,0 +1,1 @@
+export const DELIVERY_CHARGE = 40; // Fixed delivery charge
