@@ -19,7 +19,8 @@ export const createMenuSchema = z.object({
   price: z.number().min(0, "Price must be a positive number"),
   preparationTime: z
     .number()
-    .min(15, "Preparation time must be a positive number"),
+    .min(15, "Preparation time must be a positive number")
+    .optional(),
 });
 
 export type CreateMenuInput = z.infer<typeof createMenuSchema>;

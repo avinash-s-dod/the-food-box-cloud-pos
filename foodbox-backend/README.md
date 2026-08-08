@@ -34,6 +34,7 @@ The backend powers multiple clients from a single API:
 * Order Management
 * Analytics *(Upcoming)*
 
+
 ---
 
 # Tech Stack
@@ -57,7 +58,7 @@ The backend powers multiple clients from a single API:
 # Project Structure
 
 ```text
-├── src/
+src/
 ├── config/
 │   ├── db.ts                    # MongoDB connection
 │   └── env.ts                   # Environment configuration
@@ -65,7 +66,7 @@ The backend powers multiple clients from a single API:
 ├── middleware/
 │   ├── auth.middleware.ts       # Authentication & Role Authorization
 │   ├── error.middleware.ts      # Global Error Handler
-│   └── validate.middleware.ts   # (Planned)
+│   └── validate.middleware.ts   # Request Validation
 │
 ├── modules/
 │   ├── admin/
@@ -84,11 +85,23 @@ The backend powers multiple clients from a single API:
 │   │   ├── category.service.ts
 │   │   └── category.types.ts
 │   │
-│   ├── menu/                    
-│   ├── order/                   
-│   └── invoice/                 
+│   ├── menu/
+│   │   ├── menu.controller.ts
+│   │   ├── menu.model.ts
+│   │   ├── menu.route.ts
+│   │   ├── menu.schema.ts
+│   │   ├── menu.service.ts
+│   │   └── menu.types.ts
+│   │
+│   └── order/
+│       ├── order.controller.ts
+│       ├── order.model.ts
+│       ├── order.route.ts
+│       ├── order.schema.ts
+│       ├── order.service.ts
+│       └── orders.types.ts
 │
-├── seed/
+├── scripts/
 │   ├── admin.seed.ts
 │   └── category.seed.ts
 │
@@ -242,17 +255,23 @@ Runs the compiled production build.
 
 ## Phase 4
 
-* [ ] Guest Order APIs
+* [x] Order APIs
+* [x] Order Management
+* [x] Order Status Management
+* [x] Order Cancellation
 
 ## Phase 5
 
-* [ ] Chef Dashboard APIs
+* [ ] Common Utilities
+* [ ] API Features
+* [ ] Guest Order Improvements
 
 ## Phase 6
 
+* [ ] Customer APIs
+* [ ] Chef Dashboard APIs
+* [ ] Billing / Invoice
 * [ ] Analytics
-
----
 
 # Design Principles
 
