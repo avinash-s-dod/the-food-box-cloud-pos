@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import { createMenuSchema, updateMenuSchema } from "./menu.schema.js";
 import { MenuService } from "./menu.service.js";
 import type { MenuParams } from "./menu.types.js";
+import { AppError } from "../../common/AppError.js";
 
 const createMenu = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -41,7 +42,7 @@ const getMenuById = async (
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid menu id");
+      throw AppError.badRequest("Invalid menu id");
     }
 
     const menu = await MenuService.getMenuById(id);
@@ -65,7 +66,7 @@ const updateMenuById = async (
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid menu id");
+      throw AppError.badRequest("Invalid menu id");
     }
 
     const payload = updateMenuSchema.parse(req.body);
@@ -90,7 +91,7 @@ const deleteMenuById = async (
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid menu id");
+      throw AppError.badRequest("Invalid menu id");
     }
     const deletedMenu = await MenuService.deleteMenuById(id);
 

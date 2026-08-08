@@ -7,6 +7,7 @@ import {
 } from "./category.schema.js";
 import { CategoryService } from "./category.service.js";
 import type { CategoryParams } from "./category.types.js";
+import { AppError } from "../../common/AppError.js";
 
 const createCategory = async (
   req: Request,
@@ -14,7 +15,6 @@ const createCategory = async (
   next: NextFunction,
 ) => {
   try {
-    
     const payload = createCategorySchema.parse(req.body);
     const category = await CategoryService.createCategory(payload);
 
@@ -55,7 +55,7 @@ const getCategoryById = async (
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid category id");
+      throw AppError.badRequest("Invalid category id");
     }
 
     const category = await CategoryService.getCategoryById(id);
@@ -79,7 +79,7 @@ const updateCategoryById = async (
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid category id");
+      throw AppError.badRequest("Invalid category id");
     }
 
     const payload = updateCategorySchema.parse(req.body);
@@ -108,7 +108,7 @@ const deleteCategoryById = async (
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid category id");
+      throw AppError.badRequest("Invalid category id");
     }
 
     const deletedCategory = await CategoryService.deleteCategoryById(id);

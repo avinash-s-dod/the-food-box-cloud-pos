@@ -1,3 +1,4 @@
+import { AppError } from "../../common/AppError.js";
 import { CategoryModel } from "./category.model.js";
 import type {
   CreateCategoryInput,
@@ -11,7 +12,7 @@ const createCategory = async (payload: CreateCategoryInput) => {
   });
 
   if (existingCategory) {
-    throw new Error("Category already exists");
+    throw AppError.conflict("Category already exists");
   }
 
   const category = await CategoryModel.create(payload);
@@ -34,7 +35,7 @@ const getCategoryById = async (id: string) => {
   }).select("-__v");
 
   if (!category) {
-    throw new Error("Category not found");
+    throw AppError.notFound("Category not found");
   }
 
   return category;
@@ -49,7 +50,7 @@ const updateCategoryById = async (id: string, payload: UpdateCategoryInput) => {
     });
 
     if (existingCategory) {
-      throw new Error("Category already exists");
+      throw AppError.conflict("Category already exists");
     }
   }
 
@@ -62,7 +63,7 @@ const updateCategoryById = async (id: string, payload: UpdateCategoryInput) => {
   ).select("-__v");
 
   if (!updatedCategory) {
-    throw new Error("Category not found");
+    throw AppError.notFound("Category not found");
   }
 
   return updatedCategory;
@@ -81,7 +82,7 @@ const deleteCategoryById = async (id: string) => {
   ).select("-__v");
 
   if (!deletedCategory) {
-    throw new Error("Category not found");
+    throw AppError.notFound("Category not found");
   }
 
   return deletedCategory;

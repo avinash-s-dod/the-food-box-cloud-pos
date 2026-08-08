@@ -1,3 +1,4 @@
+import { AppError } from "../../common/AppError.js";
 import { CategoryModel } from "../category/category.model.js";
 import { MenuModel } from "./menu.model.js";
 import type { CreateMenuInput, UpdateMenuInput } from "./menu.schema.js";
@@ -9,7 +10,7 @@ const createMenu = async (payload: CreateMenuInput) => {
   });
 
   if (!category) {
-    throw new Error("Category not found");
+    throw AppError.notFound("Category not found");
   }
 
   const existingMenu = await MenuModel.findOne({
@@ -18,7 +19,7 @@ const createMenu = async (payload: CreateMenuInput) => {
   });
 
   if (existingMenu) {
-    throw new Error("Menu item already exists");
+    throw AppError.conflict("Menu item already exists");
   }
 
   const menu = await MenuModel.create(payload);
@@ -37,7 +38,7 @@ const getMenuById = async (id: string) => {
     "-__v",
   );
   if (!menu) {
-    throw new Error("Menu item not found");
+    throw AppError.notFound("Menu item not found");
   }
   return menu;
 };
@@ -49,7 +50,7 @@ const updateMenuById = async (id: string, payload: UpdateMenuInput) => {
   });
 
   if (!currentMenu) {
-    throw new Error("Menu item not found");
+    throw AppError.notFound("Menu item not found");
   }
 
   if (payload.category) {
@@ -59,7 +60,7 @@ const updateMenuById = async (id: string, payload: UpdateMenuInput) => {
     });
 
     if (!category) {
-      throw new Error("Category not found");
+      throw AppError.notFound("Category not found");
     }
   }
 
@@ -74,7 +75,7 @@ const updateMenuById = async (id: string, payload: UpdateMenuInput) => {
     });
 
     if (existingMenu) {
-      throw new Error("Menu item already exists in this category");
+      throw AppError.conflict("Menu item already exists in this category");
     }
   }
 
@@ -97,7 +98,7 @@ const deleteMenuById = async (id: string) => {
   ).select("-__v");
 
   if (!deletedMenu) {
-    throw new Error("Menu item not found");
+    throw AppError.notFound("Menu item not found");
   }
 
   return deletedMenu;

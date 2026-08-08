@@ -10,6 +10,7 @@ import {
   type QueryParams,
 } from "./orders.types.js";
 import { DELIVERY_CHARGE } from "../../common/constants.js";
+import { AppError } from "../../common/AppError.js";
 
 const createOrderItemSnapshots = (
   payload: CreateOrderInput,
@@ -20,10 +21,7 @@ const createOrderItemSnapshots = (
   for (const item of payload.items) {
     const menuId = item.menuId.toString();
 
-    quantityMap.set(
-      menuId,
-      (quantityMap.get(menuId) ?? 0) + item.quantity,
-    );
+    quantityMap.set(menuId, (quantityMap.get(menuId) ?? 0) + item.quantity);
   }
 
   const itemSnapshots = Array.from(quantityMap.entries()).map(
@@ -31,7 +29,7 @@ const createOrderItemSnapshots = (
       const menu = menuMap.get(menuId);
 
       if (!menu) {
-        throw new Error(`Menu item with ID ${menuId} not found`);
+        throw AppError.notFound(`Menu item with ID ${menuId} not found`);
       }
 
       return {
@@ -109,7 +107,7 @@ const getOrderById = async (id: string) => {
   const order = await OrderModel.findById(id).select("-__v");
 
   if (!order) {
-    throw new Error("Order not found");
+    throw AppError.notFound("Order not found");
   }
 
   return order;
@@ -119,21 +117,23 @@ const updateOrderStatus = async (id: string, status: OrderStatus) => {
   const existingOrder = await OrderModel.findById(id);
 
   if (!existingOrder) {
-    throw new Error("Order not found");
+    throw AppError.notFound("Order not found");
   }
 
   if (status === OrderStatus.CANCELLED) {
-    throw new Error("You cannot update the order status to CANCELLED");
+    throw AppError.badRequest(
+      "You cannot update the order status to CANCELLED",
+    );
   }
 
   if (status === existingOrder.orderStatus) {
-    throw new Error(`Order is already ${status}`);
+    throw AppError.badRequest(`Order is already ${status}`);
   }
 
   const allowedStatuses = allowedNextStatus[existingOrder.orderStatus];
 
   if (!allowedStatuses.includes(status)) {
-    throw new Error(
+    throw AppError.badRequest(
       `Order cannot be changed from ${existingOrder.orderStatus} to ${status}`,
     );
   }
@@ -160,18 +160,18 @@ const cancelOrder = async (id: string) => {
   const existingOrder = await OrderModel.findById(id);
 
   if (!existingOrder) {
-    throw new Error("Order not found");
+    throw AppError.notFound("Order not found");
   }
 
   switch (existingOrder.orderStatus) {
     case OrderStatus.CANCELLED:
-      throw new Error("Order is already cancelled");
+      throw AppError.badRequest("Order is already cancelled");
 
     case OrderStatus.OUT_FOR_DELIVERY:
-      throw new Error("Out for delivery orders cannot be cancelled");
+      throw AppError.badRequest("Out for delivery orders cannot be cancelled");
 
     case OrderStatus.DELIVERED:
-      throw new Error("Delivered orders cannot be cancelled");
+      throw AppError.badRequest("Delivered orders cannot be cancelled");
   }
 
   const order = await OrderModel.findByIdAndUpdate(

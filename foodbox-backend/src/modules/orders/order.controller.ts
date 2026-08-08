@@ -8,6 +8,7 @@ import {
   type OrderUpdateParams,
   type QueryParams,
 } from "./orders.types.js";
+import { AppError } from "../../common/AppError.js";
 
 const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -47,7 +48,7 @@ const getOrderById = async (
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid order id");
+      throw AppError.badRequest("Invalid order id");
     }
 
     const order = await OrderService.getOrderById(id);
@@ -71,7 +72,7 @@ const updateOrderStatus = async (
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid order id");
+      throw AppError.badRequest("Invalid order id");
     }
 
     const { orderStatus } = updateOrderStatusSchema.parse(req.body);
@@ -97,7 +98,7 @@ const cancelOrder = async (
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid order id");
+      throw AppError.badRequest("Invalid order id");
     }
 
     const order = await OrderService.cancelOrder(id);
