@@ -7,10 +7,11 @@ import {
   OrderStatus,
   PaymentStatus,
   type Order,
-  type QueryParams,
+  type OrderQueryParams,
 } from "./orders.types.js";
 import { DELIVERY_CHARGE } from "../../common/constants.js";
 import { AppError } from "../../common/AppError.js";
+import { ApiFeatures } from "../../common/ApiFeatures.js";
 
 const createOrderItemSnapshots = (
   payload: CreateOrderInput,
@@ -81,24 +82,14 @@ const createOrder = async (payload: CreateOrderInput) => {
   return order;
 };
 
-const getOrders = async (queryParams?: QueryParams) => {
-  const query: FilterQuery<Order> = {};
+const getOrders = async (queryParams?: OrderQueryParams) => {
+  const features = new ApiFeatures(OrderModel.find(), queryParams ?? {})
+    .filter()
+    .search(["customerName", "phone"])
+    .sort()
+    .paginate();
 
-  if (queryParams?.orderStatus) {
-    query.orderStatus = queryParams.orderStatus;
-  }
-
-  let orderQuery = OrderModel.find(query).sort({
-    createdAt: queryParams?.sortOrder === "asc" ? 1 : -1,
-  });
-
-  if (queryParams?.page && queryParams?.limit) {
-    const skip = (queryParams.page - 1) * queryParams.limit;
-
-    orderQuery = orderQuery.skip(skip).limit(queryParams.limit);
-  }
-
-  const orders = await orderQuery.select("-__v");
+  const orders = await features.query.select("-__v");
 
   return orders;
 };

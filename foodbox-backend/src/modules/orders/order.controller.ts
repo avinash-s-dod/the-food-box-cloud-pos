@@ -4,7 +4,7 @@ import { OrderService } from "./order.service.js";
 import {
   type OrderParams,
   type OrderUpdateParams,
-  type QueryParams,
+  type OrderQueryParams,
 } from "./orders.types.js";
 import { AppError } from "../../common/AppError.js";
 import { catchAsync } from "../../common/catchAsync.js";
@@ -17,7 +17,7 @@ const createOrder = catchAsync(async (req, res) => {
   return sendResponse(res, 201, "Order created successfully", order);
 });
 
-const getOrders = catchAsync<QueryParams>(async (req, res) => {
+const getOrders = catchAsync<OrderQueryParams>(async (req, res) => {
   const queryParams = req.query;
   const orders = await OrderService.getOrders(queryParams);
 

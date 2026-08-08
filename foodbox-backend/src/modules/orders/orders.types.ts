@@ -1,4 +1,5 @@
 import { Document, Types } from "mongoose";
+import type { BaseQueryParams } from "../../types/query.types.js";
 
 export enum OrderStatus {
   PLACED = "PLACED",
@@ -42,14 +43,12 @@ export type OrderParams = {
   id: string;
 };
 
-export type OrderUpdateParams={
+export type OrderUpdateParams = {
   id: string;
   status: OrderStatus;
-}
+};
 
-export interface QueryParams {
+export interface OrderQueryParams extends BaseQueryParams {
   orderStatus?: OrderStatus;
-  page?: number;
-  limit?: number;
-  sortOrder?: "asc" | "desc";
+  paymentStatus?: PaymentStatus;
 }
