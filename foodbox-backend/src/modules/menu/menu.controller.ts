@@ -1,8 +1,8 @@
+import mongoose from "mongoose";
 import type { Request, Response, NextFunction } from "express";
 import { createMenuSchema, updateMenuSchema } from "./menu.schema.js";
 import { MenuService } from "./menu.service.js";
 import type { MenuParams } from "./menu.types.js";
-import mongoose from "mongoose";
 
 const createMenu = async (req: Request, res: Response, next: NextFunction) => {
   try {
