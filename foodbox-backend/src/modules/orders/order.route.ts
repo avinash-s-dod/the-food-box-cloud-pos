@@ -4,10 +4,10 @@ import { OrderController } from "./order.controller.js";
 import { validate } from "../../middlewares/validate.middleware.js";
 import {
   createOrderSchema,
-  orderParamsSchema,
   orderQuerySchema,
   updateOrderStatusSchema,
 } from "./order.schema.js";
+import { idParamSchema } from "../../common/common.schema.js";
 
 const router = Router();
 
@@ -28,14 +28,14 @@ router.get(
 router.get(
   "/:id",
   authMiddleware(["ADMIN", "USER"]),
-  validate(orderParamsSchema, "params"),
+  validate(idParamSchema, "params"),
   OrderController.getOrderById,
 );
 
 router.put(
   "/:id/status",
   authMiddleware(["ADMIN"]),
-  validate(orderParamsSchema, "params"),
+  validate(idParamSchema, "params"),
   validate(updateOrderStatusSchema, "body"),
   OrderController.updateOrderStatus,
 );
@@ -43,7 +43,7 @@ router.put(
 router.put(
   "/:id/cancel",
   authMiddleware(["ADMIN"]),
-  validate(orderParamsSchema, "params"),
+  validate(idParamSchema, "params"),
   OrderController.cancelOrder,
 );
 

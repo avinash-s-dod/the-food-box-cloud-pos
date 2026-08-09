@@ -1,9 +1,11 @@
+import { ApiFeatures } from "../../common/ApiFeatures.js";
 import { AppError } from "../../common/AppError.js";
 import { CategoryModel } from "./category.model.js";
 import type {
   CreateCategoryInput,
   UpdateCategoryInput,
 } from "./category.schema.js";
+import type { CategoryQueryParams } from "./category.types.js";
 
 const createCategory = async (payload: CreateCategoryInput) => {
   const existingCategory = await CategoryModel.findOne({
@@ -20,10 +22,17 @@ const createCategory = async (payload: CreateCategoryInput) => {
   return category;
 };
 
-const getCategories = async () => {
-  const categories = await CategoryModel.find({ isDeleted: false })
-    .select("-__v")
-    .sort({ createdAt: -1 });
+const getCategories = async (queryParams?: CategoryQueryParams) => {
+  const features = new ApiFeatures(
+    CategoryModel.find({ isDeleted: false }),
+    queryParams ?? {},
+  )
+    .filter()
+    .search(["name", "description"])
+    .sort()
+    .paginate();
+
+  const categories = await features.query.select("-__v");
 
   return categories;
 };

@@ -1,4 +1,5 @@
 import type { Document } from "mongoose";
+import type { BaseQueryParams } from "../../types/query.types.js";
 
 export interface Category extends Document {
   name: string;
@@ -13,3 +14,7 @@ export interface Category extends Document {
 export type CategoryParams = {
   id: string;
 };
+
+export interface CategoryQueryParams extends BaseQueryParams {
+  isActive?: boolean;
+}

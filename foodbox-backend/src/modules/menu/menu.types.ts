@@ -1,4 +1,5 @@
 import { Document, Types } from "mongoose";
+import type { BaseQueryParams } from "../../types/query.types.js";
 
 export interface Menu extends Document {
   category: Types.ObjectId;
@@ -16,3 +17,7 @@ export interface Menu extends Document {
 export type MenuParams = {
   id: string;
 };
+
+export interface MenuQueryParams extends BaseQueryParams {
+  isAvailable?: boolean;
+}

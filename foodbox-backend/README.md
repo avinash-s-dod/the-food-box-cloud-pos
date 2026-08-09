@@ -262,9 +262,9 @@ Runs the compiled production build.
 
 ## Phase 5
 
-* [ ] Common Utilities
-* [ ] API Features
-* [ ] Guest Order Improvements
+* [x] Common Utilities
+* [x] API Features
+* [x] Guest Order Improvements
 
 ## Phase 6
 

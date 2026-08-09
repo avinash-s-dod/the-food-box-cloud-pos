@@ -1,7 +1,9 @@
+import { ApiFeatures } from "../../common/ApiFeatures.js";
 import { AppError } from "../../common/AppError.js";
 import { CategoryModel } from "../category/category.model.js";
 import { MenuModel } from "./menu.model.js";
 import type { CreateMenuInput, UpdateMenuInput } from "./menu.schema.js";
+import type { MenuQueryParams } from "./menu.types.js";
 
 const createMenu = async (payload: CreateMenuInput) => {
   const category = await CategoryModel.findOne({
@@ -26,10 +28,17 @@ const createMenu = async (payload: CreateMenuInput) => {
   return menu;
 };
 
-const getMenus = async () => {
-  const menus = await MenuModel.find({ isDeleted: false })
-    .select("-__v")
-    .sort({ createdAt: -1 });
+const getMenus = async (queryParams?: MenuQueryParams) => {
+  const features = new ApiFeatures(
+    MenuModel.find({ isDeleted: false }),
+    queryParams ?? {},
+  )
+    .filter()
+    .search(["name", "description"])
+    .sort()
+    .paginate();
+
+  const menus = await features.query.select("-__v");
   return menus;
 };
 
