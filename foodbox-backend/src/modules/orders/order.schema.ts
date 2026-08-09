@@ -1,6 +1,7 @@
 import { z } from "zod";
 import mongoose from "mongoose";
-import { OrderStatus } from "./orders.types.js";
+import { OrderStatus, PaymentStatus } from "./orders.types.js";
+import { baseQuerySchema } from "../../common/common.schema.js";
 
 export const createOrderSchema = z.object({
   customerName: z
@@ -47,3 +48,8 @@ export const updateOrderStatusSchema = z.object({
 });
 
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>;
+
+export const orderQuerySchema = baseQuerySchema.extend({
+  orderStatus: z.enum(OrderStatus).optional(),
+  paymentStatus: z.enum(PaymentStatus).optional(),
+});

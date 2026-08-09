@@ -7,9 +7,11 @@ import {
   OrderStatus,
   PaymentStatus,
   type Order,
-  type QueryParams,
+  type OrderQueryParams,
 } from "./orders.types.js";
 import { DELIVERY_CHARGE } from "../../common/constants.js";
+import { AppError } from "../../common/AppError.js";
+import { ApiFeatures } from "../../common/ApiFeatures.js";
 
 const createOrderItemSnapshots = (
   payload: CreateOrderInput,
@@ -20,10 +22,7 @@ const createOrderItemSnapshots = (
   for (const item of payload.items) {
     const menuId = item.menuId.toString();
 
-    quantityMap.set(
-      menuId,
-      (quantityMap.get(menuId) ?? 0) + item.quantity,
-    );
+    quantityMap.set(menuId, (quantityMap.get(menuId) ?? 0) + item.quantity);
   }
 
   const itemSnapshots = Array.from(quantityMap.entries()).map(
@@ -31,7 +30,7 @@ const createOrderItemSnapshots = (
       const menu = menuMap.get(menuId);
 
       if (!menu) {
-        throw new Error(`Menu item with ID ${menuId} not found`);
+        throw AppError.notFound(`Menu item with ID ${menuId} not found`);
       }
 
       return {
@@ -83,24 +82,14 @@ const createOrder = async (payload: CreateOrderInput) => {
   return order;
 };
 
-const getOrders = async (queryParams?: QueryParams) => {
-  const query: FilterQuery<Order> = {};
+const getOrders = async (queryParams?: OrderQueryParams) => {
+  const features = new ApiFeatures(OrderModel.find(), queryParams ?? {})
+    .filter()
+    .search(["customerName", "phone"])
+    .sort()
+    .paginate();
 
-  if (queryParams?.orderStatus) {
-    query.orderStatus = queryParams.orderStatus;
-  }
-
-  let orderQuery = OrderModel.find(query).sort({
-    createdAt: queryParams?.sortOrder === "asc" ? 1 : -1,
-  });
-
-  if (queryParams?.page && queryParams?.limit) {
-    const skip = (queryParams.page - 1) * queryParams.limit;
-
-    orderQuery = orderQuery.skip(skip).limit(queryParams.limit);
-  }
-
-  const orders = await orderQuery.select("-__v");
+  const orders = await features.query.select("-__v");
 
   return orders;
 };
@@ -109,7 +98,7 @@ const getOrderById = async (id: string) => {
   const order = await OrderModel.findById(id).select("-__v");
 
   if (!order) {
-    throw new Error("Order not found");
+    throw AppError.notFound("Order not found");
   }
 
   return order;
@@ -119,21 +108,23 @@ const updateOrderStatus = async (id: string, status: OrderStatus) => {
   const existingOrder = await OrderModel.findById(id);
 
   if (!existingOrder) {
-    throw new Error("Order not found");
+    throw AppError.notFound("Order not found");
   }
 
   if (status === OrderStatus.CANCELLED) {
-    throw new Error("You cannot update the order status to CANCELLED");
+    throw AppError.badRequest(
+      "You cannot update the order status to CANCELLED",
+    );
   }
 
   if (status === existingOrder.orderStatus) {
-    throw new Error(`Order is already ${status}`);
+    throw AppError.badRequest(`Order is already ${status}`);
   }
 
   const allowedStatuses = allowedNextStatus[existingOrder.orderStatus];
 
   if (!allowedStatuses.includes(status)) {
-    throw new Error(
+    throw AppError.badRequest(
       `Order cannot be changed from ${existingOrder.orderStatus} to ${status}`,
     );
   }
@@ -160,18 +151,18 @@ const cancelOrder = async (id: string) => {
   const existingOrder = await OrderModel.findById(id);
 
   if (!existingOrder) {
-    throw new Error("Order not found");
+    throw AppError.notFound("Order not found");
   }
 
   switch (existingOrder.orderStatus) {
     case OrderStatus.CANCELLED:
-      throw new Error("Order is already cancelled");
+      throw AppError.badRequest("Order is already cancelled");
 
     case OrderStatus.OUT_FOR_DELIVERY:
-      throw new Error("Out for delivery orders cannot be cancelled");
+      throw AppError.badRequest("Out for delivery orders cannot be cancelled");
 
     case OrderStatus.DELIVERED:
-      throw new Error("Delivered orders cannot be cancelled");
+      throw AppError.badRequest("Delivered orders cannot be cancelled");
   }
 
   const order = await OrderModel.findByIdAndUpdate(

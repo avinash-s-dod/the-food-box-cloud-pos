@@ -1,8 +1,11 @@
+import { ApiFeatures } from "../../common/ApiFeatures.js";
+import { AppError } from "../../common/AppError.js";
 import { CategoryModel } from "./category.model.js";
 import type {
   CreateCategoryInput,
   UpdateCategoryInput,
 } from "./category.schema.js";
+import type { CategoryQueryParams } from "./category.types.js";
 
 const createCategory = async (payload: CreateCategoryInput) => {
   const existingCategory = await CategoryModel.findOne({
@@ -11,7 +14,7 @@ const createCategory = async (payload: CreateCategoryInput) => {
   });
 
   if (existingCategory) {
-    throw new Error("Category already exists");
+    throw AppError.conflict("Category already exists");
   }
 
   const category = await CategoryModel.create(payload);
@@ -19,10 +22,17 @@ const createCategory = async (payload: CreateCategoryInput) => {
   return category;
 };
 
-const getCategories = async () => {
-  const categories = await CategoryModel.find({ isDeleted: false })
-    .select("-__v")
-    .sort({ createdAt: -1 });
+const getCategories = async (queryParams?: CategoryQueryParams) => {
+  const features = new ApiFeatures(
+    CategoryModel.find({ isDeleted: false }),
+    queryParams ?? {},
+  )
+    .filter()
+    .search(["name", "description"])
+    .sort()
+    .paginate();
+
+  const categories = await features.query.select("-__v");
 
   return categories;
 };
@@ -34,7 +44,7 @@ const getCategoryById = async (id: string) => {
   }).select("-__v");
 
   if (!category) {
-    throw new Error("Category not found");
+    throw AppError.notFound("Category not found");
   }
 
   return category;
@@ -49,7 +59,7 @@ const updateCategoryById = async (id: string, payload: UpdateCategoryInput) => {
     });
 
     if (existingCategory) {
-      throw new Error("Category already exists");
+      throw AppError.conflict("Category already exists");
     }
   }
 
@@ -62,7 +72,7 @@ const updateCategoryById = async (id: string, payload: UpdateCategoryInput) => {
   ).select("-__v");
 
   if (!updatedCategory) {
-    throw new Error("Category not found");
+    throw AppError.notFound("Category not found");
   }
 
   return updatedCategory;
@@ -81,7 +91,7 @@ const deleteCategoryById = async (id: string) => {
   ).select("-__v");
 
   if (!deletedCategory) {
-    throw new Error("Category not found");
+    throw AppError.notFound("Category not found");
   }
 
   return deletedCategory;

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import mongoose from "mongoose";
+import { baseQuerySchema } from "../../common/common.schema.js";
 
 export const createMenuSchema = z.object({
   category: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
@@ -28,3 +29,7 @@ export type CreateMenuInput = z.infer<typeof createMenuSchema>;
 export const updateMenuSchema = createMenuSchema.partial();
 
 export type UpdateMenuInput = z.infer<typeof updateMenuSchema>;
+
+export const menuQuerySchema = baseQuerySchema.extend({
+  isAvailable: z.boolean().optional(),
+});

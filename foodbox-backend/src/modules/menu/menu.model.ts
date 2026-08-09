@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import type { Menu } from "./menu.types.js";
+import { PREPARATION_TIME } from "../../common/constants.js";
 
 const menuSchema = new Schema<Menu>(
   {
@@ -25,7 +26,7 @@ const menuSchema = new Schema<Menu>(
     },
     preparationTime: {
       type: Number,
-      default: 30,
+      default: PREPARATION_TIME,
     },
     isAvailable: {
       type: Boolean,

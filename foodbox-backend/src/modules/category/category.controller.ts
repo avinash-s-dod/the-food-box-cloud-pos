@@ -1,127 +1,64 @@
-import mongoose from "mongoose";
-import type { Request, Response, NextFunction } from "express";
-
 import {
-  createCategorySchema,
-  updateCategorySchema,
+  type CreateCategoryInput,
+  type UpdateCategoryInput,
 } from "./category.schema.js";
 import { CategoryService } from "./category.service.js";
-import type { CategoryParams } from "./category.types.js";
+import type { CategoryParams, CategoryQueryParams } from "./category.types.js";
+import { catchAsync } from "../../common/catchAsync.js";
+import { sendResponse } from "../../common/sendResponse.js";
 
-const createCategory = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    
-    const payload = createCategorySchema.parse(req.body);
-    const category = await CategoryService.createCategory(payload);
+const createCategory = catchAsync<
+  Record<string, string>,
+  unknown,
+  CreateCategoryInput
+>(async (req, res) => {
+  const category = await CategoryService.createCategory(req.body);
 
-    return res.status(201).json({
-      status: "success",
-      message: "Category created successfully",
-      data: category,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return sendResponse(res, 201, "Category created successfully", category);
+});
 
-const getCategories = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const categories = await CategoryService.getCategories();
+const getCategories = catchAsync<CategoryQueryParams>(async (req, res) => {
+  const categories = await CategoryService.getCategories(req.query);
 
-    return res.status(200).json({
-      status: "success",
-      message: "Categories fetched successfully",
-      data: categories,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return sendResponse(res, 200, "Categories fetched successfully", categories);
+});
 
-const getCategoryById = async (
-  req: Request<CategoryParams>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
+const getCategoryById = catchAsync<CategoryParams>(async (req, res) => {
+  const category = await CategoryService.getCategoryById(req.params.id);
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid category id");
-    }
+  return sendResponse(res, 200, "Category fetched successfully", category);
+});
 
-    const category = await CategoryService.getCategoryById(id);
+const updateCategoryById = catchAsync<
+  CategoryParams,
+  unknown,
+  UpdateCategoryInput
+>(async (req, res) => {
+  const updatedCategory = await CategoryService.updateCategoryById(
+    req.params.id,
+    req.body,
+  );
 
-    return res.status(200).json({
-      success: true,
-      message: "Category fetched successfully",
-      data: category,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return sendResponse(
+    res,
+    200,
+    "Category updated successfully",
+    updatedCategory,
+  );
+});
 
-const updateCategoryById = async (
-  req: Request<CategoryParams>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
+const deleteCategoryById = catchAsync<CategoryParams>(async (req, res) => {
+  const deletedCategory = await CategoryService.deleteCategoryById(
+    req.params.id,
+  );
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid category id");
-    }
-
-    const payload = updateCategorySchema.parse(req.body);
-
-    const updatedCategory = await CategoryService.updateCategoryById(
-      id,
-      payload,
-    );
-
-    return res.status(200).json({
-      success: true,
-      message: "Category updated successfully",
-      data: updatedCategory,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const deleteCategoryById = async (
-  req: Request<CategoryParams>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid category id");
-    }
-
-    const deletedCategory = await CategoryService.deleteCategoryById(id);
-
-    return res.status(200).json({
-      success: true,
-      message: "Category deleted successfully",
-      data: deletedCategory,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return sendResponse(
+    res,
+    200,
+    "Category deleted successfully",
+    deletedCategory,
+  );
+});
 
 export const CategoryController = {
   createCategory,

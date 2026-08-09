@@ -1,108 +1,50 @@
-import mongoose from "mongoose";
-import type { Request, Response, NextFunction } from "express";
-import { createMenuSchema, updateMenuSchema } from "./menu.schema.js";
+import type { CreateMenuInput, UpdateMenuInput } from "./menu.schema.js";
 import { MenuService } from "./menu.service.js";
-import type { MenuParams } from "./menu.types.js";
+import type { MenuQueryParams, MenuParams } from "./menu.types.js";
+import { catchAsync } from "../../common/catchAsync.js";
+import { sendResponse } from "../../common/sendResponse.js";
 
-const createMenu = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const payload = createMenuSchema.parse(req.body);
-    const menu = await MenuService.createMenu(payload);
+const createMenu = catchAsync<Record<string, string>, unknown, CreateMenuInput>(
+  async (req, res) => {
+    const menu = await MenuService.createMenu(req.body);
 
-    return res.status(201).json({
-      success: true,
-      message: "Menu item created successfully",
-      data: menu,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+    return sendResponse(res, 201, "Menu item created successfully", menu);
+  },
+);
 
-const getMenus = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const menus = await MenuService.getMenus();
-    return res.status(200).json({
-      success: true,
-      message: "Menus fetched successfully",
-      data: menus,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+const getMenus = catchAsync<MenuQueryParams>(async (req, res) => {
+  const menus = await MenuService.getMenus(req.query);
 
-const getMenuById = async (
-  req: Request<MenuParams>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
+  return sendResponse(res, 200, "Menus fetched successfully", menus);
+});
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid menu id");
-    }
+const getMenuById = catchAsync<MenuParams>(async (req, res) => {
+  const menu = await MenuService.getMenuById(req.params.id);
 
-    const menu = await MenuService.getMenuById(id);
+  return sendResponse(res, 200, "Menu item fetched successfully", menu);
+});
 
-    return res.status(200).json({
-      success: true,
-      message: "Menu item fetched successfully",
-      data: menu,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+const updateMenuById = catchAsync<MenuParams, unknown, UpdateMenuInput>(
+  async (req, res) => {
+    const updatedMenu = await MenuService.updateMenuById(
+      req.params.id,
+      req.body,
+    );
 
-const updateMenuById = async (
-  req: Request<MenuParams>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
+    return sendResponse(
+      res,
+      200,
+      "Menu item updated successfully",
+      updatedMenu,
+    );
+  },
+);
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid menu id");
-    }
+const deleteMenuById = catchAsync<MenuParams>(async (req, res) => {
+  const deletedMenu = await MenuService.deleteMenuById(req.params.id);
 
-    const payload = updateMenuSchema.parse(req.body);
-    const updatedMenu = await MenuService.updateMenuById(id, payload);
-
-    return res.status(200).json({
-      success: true,
-      message: "Menu item updated successfully",
-      data: updatedMenu,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const deleteMenuById = async (
-  req: Request<MenuParams>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid menu id");
-    }
-    const deletedMenu = await MenuService.deleteMenuById(id);
-
-    return res.status(200).json({
-      success: true,
-      message: "Menu item deleted successfully",
-      data: deletedMenu,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return sendResponse(res, 200, "Menu item deleted successfully", deletedMenu);
+});
 
 export const MenuController = {
   createMenu,

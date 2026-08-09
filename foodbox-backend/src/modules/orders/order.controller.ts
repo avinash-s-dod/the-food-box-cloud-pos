@@ -1,116 +1,55 @@
-import mongoose from "mongoose";
-import type { Request, Response, NextFunction } from "express";
-import { createOrderSchema, updateOrderStatusSchema } from "./order.schema.js";
+import type {
+  CreateOrderInput,
+  UpdateOrderStatusInput,
+} from "./order.schema.js";
 import { OrderService } from "./order.service.js";
 import {
-  OrderStatus,
   type OrderParams,
-  type OrderUpdateParams,
-  type QueryParams,
+  type OrderQueryParams,
 } from "./orders.types.js";
+import { catchAsync } from "../../common/catchAsync.js";
+import { sendResponse } from "../../common/sendResponse.js";
 
-const createOrder = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const payload = createOrderSchema.parse(req.body);
-    const order = await OrderService.createOrder(payload);
+const createOrder = catchAsync<
+  Record<string, string>,
+  unknown,
+  CreateOrderInput
+>(async (req, res) => {
+  const order = await OrderService.createOrder(req.body);
 
-    return res.status(201).json({
-      success: true,
-      message: "Order created successfully",
-      data: order,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return sendResponse(res, 201, "Order created successfully", order);
+});
 
-const getOrders = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const queryParams = req.query as QueryParams;
-    const orders = await OrderService.getOrders(queryParams);
-    return res.status(200).json({
-      success: true,
-      message: "Orders fetched successfully",
-      data: orders,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+const getOrders = catchAsync<OrderQueryParams>(async (req, res) => {
+  const orders = await OrderService.getOrders(req.query);
 
-const getOrderById = async (
-  req: Request<OrderParams>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
+  return sendResponse(res, 200, "Orders fetched successfully", orders);
+});
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid order id");
-    }
+const getOrderById = catchAsync<OrderParams>(async (req, res) => {
+  const order = await OrderService.getOrderById(req.params.id);
 
-    const order = await OrderService.getOrderById(id);
+  return sendResponse(res, 200, "Order fetched successfully", order);
+});
 
-    return res.status(200).json({
-      success: true,
-      message: "Order fetched successfully",
-      data: order,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+const updateOrderStatus = catchAsync<
+  OrderParams,
+  unknown,
+  UpdateOrderStatusInput
+>(async (req, res) => {
+  const order = await OrderService.updateOrderStatus(
+    req.params.id,
+    req.body.orderStatus,
+  );
 
-const updateOrderStatus = async (
-  req: Request<OrderUpdateParams>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
+  return sendResponse(res, 200, "Order status updated successfully", order);
+});
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid order id");
-    }
+const cancelOrder = catchAsync<OrderParams>(async (req, res) => {
+  const order = await OrderService.cancelOrder(req.params.id);
 
-    const { orderStatus } = updateOrderStatusSchema.parse(req.body);
-
-    const order = await OrderService.updateOrderStatus(id, orderStatus);
-
-    return res.status(200).json({
-      success: true,
-      message: "Order status updated successfully",
-      data: order,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const cancelOrder = async (
-  req: Request<OrderParams>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid order id");
-    }
-
-    const order = await OrderService.cancelOrder(id);
-
-    return res.status(200).json({
-      success: true,
-      message: "Order cancelled successfully",
-      data: order,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return sendResponse(res, 200, "Order cancelled successfully", order);
+});
 
 export const OrderController = {
   createOrder,
