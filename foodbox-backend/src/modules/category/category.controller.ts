@@ -18,9 +18,15 @@ const createCategory = catchAsync<
 });
 
 const getCategories = catchAsync<CategoryQueryParams>(async (req, res) => {
-  const categories = await CategoryService.getCategories(req.query);
+  const result = await CategoryService.getCategories(req.query);
 
-  return sendResponse(res, 200, "Categories fetched successfully", categories);
+  return sendResponse(
+    res,
+    200,
+    "Categories fetched successfully",
+    result.categories,
+    result.paginationMeta,
+  );
 });
 
 const getCategoryById = catchAsync<CategoryParams>(async (req, res) => {

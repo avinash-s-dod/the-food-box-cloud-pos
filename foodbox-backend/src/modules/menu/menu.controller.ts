@@ -13,9 +13,15 @@ const createMenu = catchAsync<Record<string, string>, unknown, CreateMenuInput>(
 );
 
 const getMenus = catchAsync<MenuQueryParams>(async (req, res) => {
-  const menus = await MenuService.getMenus(req.query);
+  const result = await MenuService.getMenus(req.query);
 
-  return sendResponse(res, 200, "Menus fetched successfully", menus);
+  return sendResponse(
+    res,
+    200,
+    "Menus fetched successfully",
+    result.menus,
+    result.paginationMeta,
+  );
 });
 
 const getMenuById = catchAsync<MenuParams>(async (req, res) => {

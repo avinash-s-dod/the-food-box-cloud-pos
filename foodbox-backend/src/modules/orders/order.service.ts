@@ -86,12 +86,15 @@ const getOrders = async (queryParams?: OrderQueryParams) => {
   const features = new ApiFeatures(OrderModel.find(), queryParams ?? {})
     .filter()
     .search(["customerName", "phone"])
-    .sort()
-    .paginate();
+    .sort();
+
+  const paginationMeta = await features.getPaginationMeta();
+
+  features.paginate();
 
   const orders = await features.query.select("-__v");
 
-  return orders;
+  return { orders, paginationMeta };
 };
 
 const getOrderById = async (id: string) => {
