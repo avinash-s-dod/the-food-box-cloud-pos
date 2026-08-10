@@ -270,9 +270,9 @@ Runs the compiled production build.
 
 ## Phase 6
 
-* [ ] Pagination & Response Improvements
-* [ ] Standard API Response Structure
-* [ ] Apply Pagination Across List APIs
+* [x] Pagination & Response Improvements
+* [x] Standard API Response Structure
+* [x] Apply Pagination Across List APIs
 
 ## Phase 7
 

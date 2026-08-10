@@ -3,10 +3,7 @@ import type {
   UpdateOrderStatusInput,
 } from "./order.schema.js";
 import { OrderService } from "./order.service.js";
-import {
-  type OrderParams,
-  type OrderQueryParams,
-} from "./orders.types.js";
+import { type OrderParams, type OrderQueryParams } from "./orders.types.js";
 import { catchAsync } from "../../common/catchAsync.js";
 import { sendResponse } from "../../common/sendResponse.js";
 
@@ -21,9 +18,15 @@ const createOrder = catchAsync<
 });
 
 const getOrders = catchAsync<OrderQueryParams>(async (req, res) => {
-  const orders = await OrderService.getOrders(req.query);
+  const result = await OrderService.getOrders(req.query);
 
-  return sendResponse(res, 200, "Orders fetched successfully", orders);
+  return sendResponse(
+    res,
+    200,
+    "Orders fetched successfully",
+    result.orders,
+    result.paginationMeta,
+  );
 });
 
 const getOrderById = catchAsync<OrderParams>(async (req, res) => {
