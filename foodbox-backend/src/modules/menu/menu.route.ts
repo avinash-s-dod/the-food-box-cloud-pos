@@ -8,12 +8,13 @@ import {
   updateMenuSchema,
 } from "./menu.schema.js";
 import { idParamSchema } from "../../common/common.schema.js";
+import { AdminRole } from "../admin/admin.types.js";
 
 const router = Router();
 
 router.post(
   "/",
-  authMiddleware(["ADMIN"]),
+  authMiddleware([AdminRole.ADMIN]),
   validate(createMenuSchema, "body"),
   MenuController.createMenu,
 );
@@ -28,7 +29,7 @@ router.get(
 
 router.put(
   "/:id",
-  authMiddleware(["ADMIN"]),
+  authMiddleware([AdminRole.ADMIN]),
   validate(idParamSchema, "params"),
   validate(updateMenuSchema, "body"),
   MenuController.updateMenuById,
@@ -36,7 +37,7 @@ router.put(
 
 router.delete(
   "/:id",
-  authMiddleware(["ADMIN"]),
+  authMiddleware([AdminRole.ADMIN]),
   validate(idParamSchema, "params"),
   MenuController.deleteMenuById,
 );

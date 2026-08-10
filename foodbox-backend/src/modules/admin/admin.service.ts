@@ -7,7 +7,7 @@ import { AppError } from "../../common/AppError.js";
 const loginAdmin = async (payload: AdminLoginInput) => {
   const { email, password } = payload;
 
-  const admin = await AdminModel.findOne({ email }).select("+password");
+  const admin = await AdminModel.findOne({ email }).select("+password -__v");
 
   if (!admin) {
     throw AppError.badRequest("Invalid email or password");
@@ -39,7 +39,7 @@ const loginAdmin = async (payload: AdminLoginInput) => {
 };
 
 const getProfile = async (adminId: string) => {
-  const admin = await AdminModel.findById(adminId).select("-password,-__v");
+  const admin = await AdminModel.findById(adminId).select("-password -__v");
 
   if (!admin) {
     throw AppError.notFound("Admin not found");
