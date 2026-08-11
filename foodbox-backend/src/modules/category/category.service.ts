@@ -29,12 +29,15 @@ const getCategories = async (queryParams?: CategoryQueryParams) => {
   )
     .filter()
     .search(["name", "description"])
-    .sort()
-    .paginate();
+    .sort();
+
+  const paginationMeta = await features.getPaginationMeta();
+
+  features.paginate();
 
   const categories = await features.query.select("-__v");
 
-  return categories;
+  return { categories, paginationMeta };
 };
 
 const getCategoryById = async (id: string) => {

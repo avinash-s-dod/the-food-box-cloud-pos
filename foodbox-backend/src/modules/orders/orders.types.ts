@@ -44,6 +44,7 @@ export type OrderParams = {
 };
 
 export interface OrderQueryParams extends BaseQueryParams {
+  userId?: Types.ObjectId;
   orderStatus?: OrderStatus;
   paymentStatus?: PaymentStatus;
 }

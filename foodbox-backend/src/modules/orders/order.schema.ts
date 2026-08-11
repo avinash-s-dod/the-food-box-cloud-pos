@@ -13,7 +13,6 @@ export const createOrderSchema = z.object({
     .string()
     .trim()
     .regex(/^[0-9]{10}$/, "Phone number must contain exactly 10 digits"),
-
   address: z
     .string()
     .trim()
@@ -50,6 +49,12 @@ export const updateOrderStatusSchema = z.object({
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>;
 
 export const orderQuerySchema = baseQuerySchema.extend({
+  userId: z
+    .string()
+    .refine((val) => mongoose.Types.ObjectId.isValid(val), {
+      message: "Invalid user ID format",
+    })
+    .optional(),
   orderStatus: z.enum(OrderStatus).optional(),
   paymentStatus: z.enum(PaymentStatus).optional(),
 });

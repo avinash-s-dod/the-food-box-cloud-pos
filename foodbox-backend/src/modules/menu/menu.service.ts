@@ -35,11 +35,13 @@ const getMenus = async (queryParams?: MenuQueryParams) => {
   )
     .filter()
     .search(["name", "description"])
-    .sort()
-    .paginate();
+    .sort();
+
+  const paginationMeta = await features.getPaginationMeta();
+  features.paginate();
 
   const menus = await features.query.select("-__v");
-  return menus;
+  return { menus, paginationMeta };
 };
 
 const getMenuById = async (id: string) => {

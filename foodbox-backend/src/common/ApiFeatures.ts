@@ -4,9 +4,24 @@ export class ApiFeatures<T, Q extends object> {
   public query: Query<T[], T>;
   public queryString: Q;
 
+  private page: number;
+  private limit: number;
+
   constructor(query: Query<T[], T>, queryString: Q) {
     this.query = query;
     this.queryString = queryString;
+
+    const queryObj = queryString as Record<string, unknown>;
+
+    this.page =
+      typeof queryObj.page === "number"
+        ? queryObj.page
+        : Number(queryObj.page) || 1;
+
+    this.limit =
+      typeof queryObj.limit === "number"
+        ? queryObj.limit
+        : Number(queryObj.limit) || 10;
   }
 
   filter() {
@@ -56,22 +71,21 @@ export class ApiFeatures<T, Q extends object> {
   }
 
   paginate() {
-    const queryObj = this.queryString as Record<string, unknown>;
+    const skip = (this.page - 1) * this.limit;
 
-    const page =
-      typeof queryObj.page === "number"
-        ? queryObj.page
-        : Number(queryObj.page) || 1;
-
-    const limit =
-      typeof queryObj.limit === "number"
-        ? queryObj.limit
-        : Number(queryObj.limit) || 10;
-
-    const skip = (page - 1) * limit;
-
-    this.query = this.query.skip(skip).limit(limit);
+    this.query = this.query.skip(skip).limit(this.limit);
 
     return this;
+  }
+
+  async getPaginationMeta() {
+    const total = await this.query.clone().countDocuments();
+
+    return {
+      page: this.page,
+      limit: this.limit,
+      total,
+      totalPages: Math.ceil(total / this.limit),
+    };
   }
 }

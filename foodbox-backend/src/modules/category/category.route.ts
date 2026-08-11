@@ -8,12 +8,13 @@ import {
   updateCategorySchema,
 } from "./category.schema.js";
 import { idParamSchema } from "../../common/common.schema.js";
+import { AdminRole } from "../admin/admin.types.js";
 
 const router = Router();
 
 router.post(
   "/",
-  authMiddleware(["ADMIN"]),
+  authMiddleware([AdminRole.ADMIN]),
   validate(createCategorySchema, "body"),
   CategoryController.createCategory,
 );
@@ -26,13 +27,14 @@ router.get(
 
 router.get(
   "/:id",
+  authMiddleware([AdminRole.ADMIN]),
   validate(idParamSchema, "params"),
   CategoryController.getCategoryById,
 );
 
 router.put(
   "/:id",
-  authMiddleware(["ADMIN"]),
+  authMiddleware([AdminRole.ADMIN]),
   validate(idParamSchema, "params"),
   validate(updateCategorySchema, "body"),
   CategoryController.updateCategoryById,
@@ -40,7 +42,7 @@ router.put(
 
 router.delete(
   "/:id",
-  authMiddleware(["ADMIN"]),
+  authMiddleware([AdminRole.ADMIN]),
   validate(idParamSchema, "params"),
   CategoryController.deleteCategoryById,
 );
