@@ -8,33 +8,35 @@ import {
   updateOrderStatusSchema,
 } from "./order.schema.js";
 import { idParamSchema } from "../../common/common.schema.js";
+import { AdminRole } from "../admin/admin.types.js";
+import { CustomerRole } from "../customers/customer.types.js";
 
 const router = Router();
 
 router.post(
   "/",
-  authMiddleware(["ADMIN", "USER"]),
+  authMiddleware([AdminRole.ADMIN, CustomerRole.USER]),
   validate(createOrderSchema, "body"),
   OrderController.createOrder,
 );
 
 router.get(
   "/",
-  authMiddleware(["ADMIN"]),
+  authMiddleware([AdminRole.ADMIN]),
   validate(orderQuerySchema, "query"),
   OrderController.getOrders,
 );
 
 router.get(
   "/:id",
-  authMiddleware(["ADMIN", "USER"]),
+  authMiddleware([AdminRole.ADMIN, CustomerRole.USER]),
   validate(idParamSchema, "params"),
   OrderController.getOrderById,
 );
 
 router.put(
   "/:id/status",
-  authMiddleware(["ADMIN"]),
+  authMiddleware([AdminRole.ADMIN]),
   validate(idParamSchema, "params"),
   validate(updateOrderStatusSchema, "body"),
   OrderController.updateOrderStatus,
@@ -42,7 +44,7 @@ router.put(
 
 router.put(
   "/:id/cancel",
-  authMiddleware(["ADMIN"]),
+  authMiddleware([AdminRole.ADMIN]),
   validate(idParamSchema, "params"),
   OrderController.cancelOrder,
 );

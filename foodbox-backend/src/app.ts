@@ -7,6 +7,7 @@ import { AdminRouter } from "./modules/admin/admin.route.js";
 import { CategoryRouter } from "./modules/category/category.route.js";
 import { MenuRouter } from "./modules/menu/menu.route.js";
 import { OrderRouter } from "./modules/orders/order.route.js";
+import { CustomerRouter } from "./modules/customers/customer.route.js";
 
 import { errorHandler } from "./middlewares/error.middleware.js";
 
@@ -31,6 +32,7 @@ app.use("/api/admin", AdminRouter);
 app.use("/api/categories", CategoryRouter);
 app.use("/api/menu", MenuRouter);
 app.use("/api/orders", OrderRouter);
+app.use("/api/customers", CustomerRouter);
 
 app.use(errorHandler);
 
