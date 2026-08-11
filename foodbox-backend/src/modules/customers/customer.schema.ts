@@ -37,7 +37,7 @@ export const updateCustomerSchema = createCustomerSchema
   .omit({
     password: true,
   })
-  .partial();
+  .partial().strict();
 
 export const changePasswordSchema = z.object({
   currentPassword: z.string().min(6, "Current password is required"),
