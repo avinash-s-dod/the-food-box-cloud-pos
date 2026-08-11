@@ -8,6 +8,7 @@ import { CategoryRouter } from "./modules/category/category.route.js";
 import { MenuRouter } from "./modules/menu/menu.route.js";
 import { OrderRouter } from "./modules/orders/order.route.js";
 import { CustomerRouter } from "./modules/customers/customer.route.js";
+import { SettingsRouter } from "./modules/settings/setting.route.js";
 
 import { errorHandler } from "./middlewares/error.middleware.js";
 
@@ -33,6 +34,7 @@ app.use("/api/categories", CategoryRouter);
 app.use("/api/menu", MenuRouter);
 app.use("/api/orders", OrderRouter);
 app.use("/api/customers", CustomerRouter);
+app.use("/api/settings", SettingsRouter);
 
 app.use(errorHandler);
 

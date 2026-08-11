@@ -283,11 +283,10 @@ Runs the compiled production build.
 
 ## Phase 8
 
-* [ ] Settings Module
-* [ ] Delivery Charge
-* [ ] Restaurant Information
-* [ ] Opening Hours
-* [ ] Future Configuration
+* [x] Settings Module
+* [x] Delivery Charge
+* [x] Restaurant Information
+* [x] Opening Hours
 
 ## Phase 9
 
