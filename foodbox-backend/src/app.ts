@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./docs/swagger.js";
 
 import { AdminRouter } from "./modules/admin/admin.route.js";
 import { CategoryRouter } from "./modules/category/category.route.js";
@@ -21,6 +23,16 @@ app.use(helmet());
 app.use(morgan("dev"));
 
 app.use(express.json());
+
+app.use(
+  "/api/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  }),
+);
 
 app.get("/health", (_, res) => {
   res.json({
