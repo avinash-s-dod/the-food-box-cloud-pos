@@ -22,7 +22,10 @@ const createCategory = async (payload: CreateCategoryInput) => {
 
   const category = await CategoryModel.create(payload);
 
-  logger.info("Category created", { categoryId: category._id, name: category.name });
+  logger.info("Category created", {
+    categoryId: category._id,
+    name: category.name,
+  });
 
   return category;
 };
@@ -89,7 +92,10 @@ const updateCategoryById = async (id: string, payload: UpdateCategoryInput) => {
     throw AppError.notFound("Category not found");
   }
 
-  logger.info("Category updated", { categoryId: updatedCategory._id, name: updatedCategory.name });
+  logger.info("Category updated", {
+    categoryId: updatedCategory._id,
+    name: updatedCategory.name,
+  });
 
   return updatedCategory;
 };
@@ -112,7 +118,10 @@ const deleteCategoryById = async (id: string) => {
     throw AppError.notFound("Category not found");
   }
 
-  logger.info("Category deleted", { categoryId: deletedCategory._id, name: deletedCategory.name });
+  logger.info("Category deleted", {
+    categoryId: deletedCategory._id,
+    name: deletedCategory.name,
+  });
 
   return deletedCategory;
 };
