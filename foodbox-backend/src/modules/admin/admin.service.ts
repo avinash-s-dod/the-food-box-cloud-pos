@@ -3,6 +3,7 @@ import { generateToken } from "../../utils/jwt.js";
 import { AdminModel } from "./admin.model.js";
 import type { AdminLoginInput } from "./admin.schema.js";
 import { AppError } from "../../common/AppError.js";
+import { logger } from "../../logger/logger.js";
 
 // Service: Login Admin
 // Description: Validates email, active status, and password hash. Generates and returns a JWT token.
@@ -33,6 +34,8 @@ const loginAdmin = async (payload: AdminLoginInput) => {
     id: admin.id,
     role: admin.role,
   });
+
+  logger.info("Admin logged in successfully", { adminId: admin.id });
 
   const adminResponse = admin.toObject();
   const { password: _, ...adminData } = adminResponse; // Remove password field from returning object

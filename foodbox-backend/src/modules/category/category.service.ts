@@ -6,6 +6,7 @@ import type {
   UpdateCategoryInput,
 } from "./category.schema.js";
 import type { CategoryQueryParams } from "./category.types.js";
+import { logger } from "../../logger/logger.js";
 
 // Service: Create Category
 // Description: Checks for duplicates by name, then creates a new Category in database
@@ -20,6 +21,11 @@ const createCategory = async (payload: CreateCategoryInput) => {
   }
 
   const category = await CategoryModel.create(payload);
+
+  logger.info("Category created", {
+    categoryId: category._id,
+    name: category.name,
+  });
 
   return category;
 };
@@ -86,6 +92,11 @@ const updateCategoryById = async (id: string, payload: UpdateCategoryInput) => {
     throw AppError.notFound("Category not found");
   }
 
+  logger.info("Category updated", {
+    categoryId: updatedCategory._id,
+    name: updatedCategory.name,
+  });
+
   return updatedCategory;
 };
 
@@ -106,6 +117,11 @@ const deleteCategoryById = async (id: string) => {
   if (!deletedCategory) {
     throw AppError.notFound("Category not found");
   }
+
+  logger.info("Category deleted", {
+    categoryId: deletedCategory._id,
+    name: deletedCategory.name,
+  });
 
   return deletedCategory;
 };

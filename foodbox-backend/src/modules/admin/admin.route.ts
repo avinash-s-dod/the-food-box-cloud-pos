@@ -4,6 +4,7 @@ import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { validate } from "../../middlewares/validate.middleware.js";
 import { adminLoginSchema } from "./admin.schema.js";
 import { AdminRole } from "./admin.types.js";
+import { authRateLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 // Initialize Router for Admin module
 const router = Router();
@@ -13,6 +14,7 @@ const router = Router();
 router.post(
   "/login",
   validate(adminLoginSchema, "body"), // Validate request body structure using Zod schema
+  authRateLimiter,
   AdminController.login, // Call login handler in controller
 );
 

@@ -16,38 +16,44 @@ import { SettingsRouter } from "./modules/settings/setting.route.js";
 
 // Import global error handling middleware
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { logger } from "./logger/logger.js";
+import { env } from "./config/env.js";
 
 // Initialize Express App
 const app = express();
 
 // Enable Cross-Origin Resource Sharing
-app.use(cors());
+app.use(
+  cors({
+    origin: env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 
 // Secure Express headers (disable CSP so Swagger and welcome page inline styles/scripts load properly)
 app.use(helmet({ contentSecurityPolicy: false }));
 
 // HTTP request logging middleware
-app.use(morgan("dev"));
+// const morganFormat = env.NODE_ENV === "development" ? "dev" : "combined";
+app.use(
+  morgan(":remote-addr :method :url :status :res[content-length] :user-agent", {
+    stream: {
+      write: (message) => {
+        logger.info(message.trim());
+      },
+    },
+  }),
+);
 
 // Body parser middleware to handle incoming json requests
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 // Route: GET /
 // Description: Serves a welcome HTML page displaying backend server info and shortcut link to Swagger UI Docs
 app.get("/", (_, res) => {
   res.send(welcomeTemplate);
 });
-
-// Swagger documentation endpoint configuration
-app.use(
-  "/api/docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    swaggerOptions: {
-      persistAuthorization: true, // Persists authorize key after page refresh
-    },
-  }),
-);
 
 // Route: GET /health
 // Description: Simple health check status endpoint
@@ -65,6 +71,17 @@ app.use("/api/menu", MenuRouter);
 app.use("/api/orders", OrderRouter);
 app.use("/api/customers", CustomerRouter);
 app.use("/api/settings", SettingsRouter);
+
+// Swagger documentation endpoint configuration
+app.use(
+  "/api/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: {
+      persistAuthorization: true, // Persists authorize key after page refresh
+    },
+  }),
+);
 
 // Register global error middleware
 app.use(errorHandler);

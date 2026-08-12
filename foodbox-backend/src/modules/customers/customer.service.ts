@@ -11,6 +11,7 @@ import type {
 } from "./customer.schema.js";
 import type { CustomerQueryParams } from "./customer.types.js";
 import { ApiFeatures } from "../../common/ApiFeatures.js";
+import { logger } from "../../logger/logger.js";
 
 // Service: Register Customer
 // Description: Checks if the phone or email is already registered, then saves the new customer profile
@@ -71,6 +72,8 @@ const customerLogin = async (payload: CustomerLoginInput) => {
     id: customer.id,
     role: customer.role,
   });
+
+  logger.info("Customer logged in successfully", { customerId: customer.id });
 
   const customerResponse = customer.toObject();
 
