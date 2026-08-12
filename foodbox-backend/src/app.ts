@@ -16,6 +16,8 @@ import { SettingsRouter } from "./modules/settings/setting.route.js";
 
 // Import global error handling middleware
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { env } from "./config/env.js";
+import { logger } from "./logger/logger.js";
 
 // Initialize Express App
 const app = express();
@@ -27,7 +29,16 @@ app.use(cors());
 app.use(helmet({ contentSecurityPolicy: false }));
 
 // HTTP request logging middleware
-app.use(morgan("dev"));
+// const morganFormat = env.NODE_ENV === "development" ? "dev" : "combined";
+app.use(
+  morgan(":remote-addr :method :url :status :res[content-length] :user-agent", {
+    stream: {
+      write: (message) => {
+        logger.info(message.trim());
+      },
+    },
+  }),
+);
 
 // Body parser middleware to handle incoming json requests
 app.use(express.json());
@@ -37,17 +48,6 @@ app.use(express.json());
 app.get("/", (_, res) => {
   res.send(welcomeTemplate);
 });
-
-// Swagger documentation endpoint configuration
-app.use(
-  "/api/docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    swaggerOptions: {
-      persistAuthorization: true, // Persists authorize key after page refresh
-    },
-  }),
-);
 
 // Route: GET /health
 // Description: Simple health check status endpoint
@@ -65,6 +65,17 @@ app.use("/api/menu", MenuRouter);
 app.use("/api/orders", OrderRouter);
 app.use("/api/customers", CustomerRouter);
 app.use("/api/settings", SettingsRouter);
+
+// Swagger documentation endpoint configuration
+app.use(
+  "/api/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: {
+      persistAuthorization: true, // Persists authorize key after page refresh
+    },
+  }),
+);
 
 // Register global error middleware
 app.use(errorHandler);

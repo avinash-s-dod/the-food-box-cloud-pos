@@ -4,6 +4,9 @@ import { OrderStatus, PaymentStatus } from "./orders.types.js";
 import { baseQuerySchema } from "../../common/common.schema.js";
 
 export const createOrderSchema = z.object({
+  userId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
+    message: "Invalid User ID format",
+  }).optional(),
   customerName: z
     .string()
     .trim()
