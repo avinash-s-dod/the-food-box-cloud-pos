@@ -6,12 +6,16 @@ import {
 } from "./setting.schema.js";
 import { SettingsService } from "./setting.service.js";
 
+// Handler: Get Settings
+// Description: Fetches current restaurant settings (there is only one configuration document in DB)
 const getSettings = catchAsync(async (_req, res) => {
   const settings = await SettingsService.getSettings();
 
   return sendResponse(res, 200, "Settings fetched successfully", settings);
 });
 
+// Handler: Create Settings
+// Description: Initializes restaurant settings
 const createSettings = catchAsync<
   Record<string, string>,
   unknown,
@@ -22,6 +26,8 @@ const createSettings = catchAsync<
   return sendResponse(res, 201, "Settings created successfully", settings);
 });
 
+// Handler: Update Settings
+// Description: Partially updates existing restaurant settings
 const updateSettings = catchAsync<
   Record<string, string>,
   unknown,

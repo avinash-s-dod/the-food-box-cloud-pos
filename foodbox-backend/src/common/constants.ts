@@ -1,3 +1,6 @@
-export const DELIVERY_CHARGE = 40; // Fixed delivery charge
+// Global Constants
+// Fixed delivery charge applied to every order placement
+export const DELIVERY_CHARGE = 40; 
 
-export const PREPARATION_TIME = 30; // Fixed preparation time in minutes
+// Default preparation time (in minutes) for menu items
+export const PREPARATION_TIME = 30;

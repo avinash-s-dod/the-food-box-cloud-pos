@@ -1,6 +1,7 @@
 import { connectDB } from "../config/db.js";
 import { CategoryModel } from "../modules/category/category.model.js";
 
+// Default set of category documents to seed
 const categories = [
   {
     name: "Sandwiches",
@@ -40,12 +41,16 @@ const categories = [
   },
 ];
 
+// Script: Seed Categories
+// Description: Clears current categories and inserts the default initial categories list
 const seedCategories = async () => {
   try {
     await connectDB();
 
+    // Clear existing collections records
     await CategoryModel.deleteMany({});
 
+    // Bulk insert default category lists
     await CategoryModel.insertMany(categories);
 
     console.log("Categories seeded successfully.");

@@ -2,11 +2,12 @@ import { Schema, model } from "mongoose";
 import type { Menu } from "./menu.types.js";
 import { PREPARATION_TIME } from "../../common/constants.js";
 
+// Mongoose Schema for Menu Item entity
 const menuSchema = new Schema<Menu>(
   {
     category: {
       type: Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "Category", // Reference ID to Category collection
       required: [true, "Category is required"],
     },
     name: {
@@ -26,19 +27,19 @@ const menuSchema = new Schema<Menu>(
     },
     preparationTime: {
       type: Number,
-      default: PREPARATION_TIME,
+      default: PREPARATION_TIME, // Default item prep time (in minutes)
     },
     isAvailable: {
       type: Boolean,
-      default: true,
+      default: true, // Availability status of the item
     },
     isDeleted: {
       type: Boolean,
-      default: false,
+      default: false, // soft deletion flag
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Automatically manages createdAt and updatedAt fields
   },
 );
 

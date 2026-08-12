@@ -1,11 +1,12 @@
 import { Schema, model, Document } from "mongoose";
 import { OrderStatus, PaymentStatus, type Order } from "./orders.types.js";
 
+// Mongoose Schema for Order entity
 const orderSchema = new Schema<Order>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "User", // Optional reference if customer has an account
     },
     customerName: {
       type: String,
@@ -27,7 +28,7 @@ const orderSchema = new Schema<Order>(
         {
           menuId: {
             type: Schema.Types.ObjectId,
-            ref: "Menu",
+            ref: "Menu", // Reference ID to Menu Item collection
             required: [true, "Menu ID is required"],
           },
           name: { type: String, required: [true, "Item name is required"] },
@@ -63,16 +64,16 @@ const orderSchema = new Schema<Order>(
     orderStatus: {
       type: String,
       enum: Object.values(OrderStatus),
-      default: OrderStatus.PLACED,
+      default: OrderStatus.PLACED, // Default status for new orders
     },
     paymentStatus: {
       type: String,
       enum: Object.values(PaymentStatus),
-      default: PaymentStatus.PENDING,
+      default: PaymentStatus.PENDING, // Default payment status
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Automatically manages createdAt and updatedAt fields
   },
 );
 

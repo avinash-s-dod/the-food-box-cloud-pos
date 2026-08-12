@@ -4,6 +4,7 @@ import { CustomerRole, type CustomerEntity } from "./customer.types.js";
 
 export type CustomerDocument = HydratedDocument<CustomerEntity>;
 
+// Mongoose Schema for Customer entity
 const customerSchema = new Schema<CustomerEntity>(
   {
     name: {
@@ -14,7 +15,7 @@ const customerSchema = new Schema<CustomerEntity>(
     phone: {
       type: String,
       required: [true, "Phone is required"],
-      unique: true,
+      unique: true, // Phone must be unique across non-deleted customers
       trim: true,
     },
     email: {
@@ -22,12 +23,12 @@ const customerSchema = new Schema<CustomerEntity>(
       unique: true,
       lowercase: true,
       trim: true,
-      sparse: true,
+      sparse: true, // Allow multiple null values for optional email field
     },
     password: {
       type: String,
       required: [true, "Password is required"],
-      select: false,
+      select: false, // Exclude from query results by default
     },
     role: {
       type: String,
@@ -36,14 +37,16 @@ const customerSchema = new Schema<CustomerEntity>(
     },
     isDeleted: {
       type: Boolean,
-      default: false,
+      default: false, // soft deletion flag
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Automatically manages createdAt and updatedAt fields
   },
 );
 
+// Mongoose Pre-Save Middleware
+// Description: Automatically hashes password before saving if it has been modified or newly created
 customerSchema.pre("save", async function (this: CustomerDocument) {
   if (!this.isModified("password")) return;
 

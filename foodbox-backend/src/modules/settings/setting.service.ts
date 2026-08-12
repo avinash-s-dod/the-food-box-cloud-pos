@@ -5,6 +5,8 @@ import type {
   UpdateSettingsInput,
 } from "./setting.schema.js";
 
+// Service: Get Settings
+// Description: Fetches the single settings document containing restaurant metadata and times
 const getSettings = async () => {
   const settings = await SettingsModel.findOne().select("-__v");
 
@@ -15,6 +17,8 @@ const getSettings = async () => {
   return settings;
 };
 
+// Service: Create Settings
+// Description: Ensures settings do not already exist, then creates the initial settings document
 const createSettings = async (payload: CreateSettingsInput) => {
   const existingSettings = await SettingsModel.findOne();
 
@@ -27,6 +31,8 @@ const createSettings = async (payload: CreateSettingsInput) => {
   return settings;
 };
 
+// Service: Update Settings
+// Description: Finds and updates the singleton settings document in the collection
 const updateSettings = async (payload: UpdateSettingsInput) => {
   const settings = await SettingsModel.findOneAndUpdate({}, payload, {
     returnDocument: "after",
