@@ -26,7 +26,9 @@ export const createMenuSchema = z.object({
 
 export type CreateMenuInput = z.infer<typeof createMenuSchema>;
 
-export const updateMenuSchema = createMenuSchema.partial().strict();
+export const updateMenuSchema = createMenuSchema.extend({
+  isAvailable: z.boolean().optional()
+}).partial().strict();
 
 export type UpdateMenuInput = z.infer<typeof updateMenuSchema>;
 

@@ -4,6 +4,7 @@ import type {
   CreateSettingsInput,
   UpdateSettingsInput,
 } from "./setting.schema.js";
+import { logger } from "../../logger/logger.js";
 
 // Service: Get Settings
 // Description: Fetches the single settings document containing restaurant metadata and times
@@ -28,6 +29,8 @@ const createSettings = async (payload: CreateSettingsInput) => {
 
   const settings = await SettingsModel.create(payload);
 
+  logger.info("Settings created", { settingsId: settings._id });
+
   return settings;
 };
 
@@ -42,6 +45,8 @@ const updateSettings = async (payload: UpdateSettingsInput) => {
   if (!settings) {
     throw AppError.notFound("Settings not configured");
   }
+
+  logger.info("Settings updated", { settingsId: settings._id });
 
   return settings;
 };

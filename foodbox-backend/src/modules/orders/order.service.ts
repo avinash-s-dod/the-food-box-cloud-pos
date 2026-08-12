@@ -12,6 +12,7 @@ import {
 import { DELIVERY_CHARGE } from "../../common/constants.js";
 import { AppError } from "../../common/AppError.js";
 import { ApiFeatures } from "../../common/ApiFeatures.js";
+import { logger } from "../../logger/logger.js";
 
 // Helper: Create Order Item Snapshots
 // Description: Matches order items with active menu items, aggregates quantities, checks existence, and maps prices
@@ -84,6 +85,9 @@ const createOrder = async (payload: CreateOrderInput) => {
   };
 
   const order = await OrderModel.create(orderPayload);
+
+  logger.info("Order created", { orderId: order._id, customerId: order.userId, grandTotal: order.grandTotal });
+
   return order;
 };
 
@@ -159,6 +163,12 @@ const updateOrderStatus = async (id: string, status: OrderStatus) => {
     returnDocument: "after",
   }).select("-__v");
 
+  if (!order) {
+    throw AppError.notFound("Order not found");
+  }
+
+  logger.info("Order status changed", { orderId: order._id, previousStatus: existingOrder.orderStatus, newStatus: order.orderStatus });
+
   return order;
 };
 
@@ -191,6 +201,12 @@ const cancelOrder = async (id: string) => {
       returnDocument: "after",
     },
   ).select("-__v");
+
+  if (!order) {
+    throw AppError.notFound("Order not found");
+  }
+
+  logger.info("Order cancelled", { orderId: order._id });
 
   return order;
 };

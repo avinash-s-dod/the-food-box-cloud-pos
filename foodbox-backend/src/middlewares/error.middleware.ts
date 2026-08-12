@@ -1,18 +1,16 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { AppError } from "../common/AppError.js";
+import { logger } from "../logger/logger.js";
 
 // Middleware: Global Error Handler
 // Description: Intercepts all unhandled errors thrown during request pipeline, categorizes them, and structures standard responses.
 export const errorHandler = (
   error: unknown,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ) => {
-  console.error("ERROR:", error);
-
-  // Handle customized AppError instances
   if (error instanceof AppError) {
     return res.status(error.statusCode).json({
       success: false,
@@ -23,7 +21,6 @@ export const errorHandler = (
     });
   }
 
-  // Handle request validation schema errors from Zod
   if (error instanceof ZodError) {
     return res.status(400).json({
       success: false,
@@ -32,7 +29,17 @@ export const errorHandler = (
     });
   }
 
-  // Fallback for internal server/uncaught runtime errors
+  if (error instanceof Error) {
+    logger.error("Unexpected application error", {
+      message: error.message,
+      stack: error.stack,
+    });
+  } else {
+    logger.error("Unexpected application error", {
+      error,
+    });
+  }
+
   return res.status(500).json({
     success: false,
     message: "Something went wrong",
