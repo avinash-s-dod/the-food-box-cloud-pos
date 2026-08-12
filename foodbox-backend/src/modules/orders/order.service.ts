@@ -13,6 +13,8 @@ import { DELIVERY_CHARGE } from "../../common/constants.js";
 import { AppError } from "../../common/AppError.js";
 import { ApiFeatures } from "../../common/ApiFeatures.js";
 
+// Helper: Create Order Item Snapshots
+// Description: Matches order items with active menu items, aggregates quantities, checks existence, and maps prices
 const createOrderItemSnapshots = (
   payload: CreateOrderInput,
   menuMap: Map<string, HydratedDocument<Menu>>,
@@ -46,6 +48,7 @@ const createOrderItemSnapshots = (
   return itemSnapshots;
 };
 
+// State Machine configuration for allowed order status transitions
 const allowedNextStatus: Record<OrderStatus, OrderStatus[]> = {
   [OrderStatus.PLACED]: [OrderStatus.CONFIRMED],
   [OrderStatus.CONFIRMED]: [OrderStatus.OUT_FOR_DELIVERY],
@@ -54,6 +57,8 @@ const allowedNextStatus: Record<OrderStatus, OrderStatus[]> = {
   [OrderStatus.CANCELLED]: [],
 };
 
+// Service: Create Order
+// Description: Validates items availability, builds calculations (subtotal, delivery, grandTotal), and stores order
 const createOrder = async (payload: CreateOrderInput) => {
   const menuIds = payload.items.map((item) => item.menuId);
 
@@ -82,6 +87,8 @@ const createOrder = async (payload: CreateOrderInput) => {
   return order;
 };
 
+// Service: Get Orders
+// Description: Filters, searches customer details, and paginates orders
 const getOrders = async (queryParams?: OrderQueryParams) => {
   const features = new ApiFeatures(OrderModel.find(), queryParams ?? {})
     .filter()
@@ -97,6 +104,8 @@ const getOrders = async (queryParams?: OrderQueryParams) => {
   return { orders, paginationMeta };
 };
 
+// Service: Get Order By ID
+// Description: Fetches details of a specific order
 const getOrderById = async (id: string) => {
   const order = await OrderModel.findById(id).select("-__v");
 
@@ -107,6 +116,8 @@ const getOrderById = async (id: string) => {
   return order;
 };
 
+// Service: Update Order Status
+// Description: Validates the request is not setting it to CANCELLED, checks transition validity, handles payments updates, and updates the db
 const updateOrderStatus = async (id: string, status: OrderStatus) => {
   const existingOrder = await OrderModel.findById(id);
 
@@ -139,6 +150,7 @@ const updateOrderStatus = async (id: string, status: OrderStatus) => {
     orderStatus: status,
   };
 
+  // Automatically mark order as PAID if it moves to CONFIRMED status
   if (status === OrderStatus.CONFIRMED) {
     updateData.paymentStatus = PaymentStatus.PAID;
   }
@@ -150,6 +162,8 @@ const updateOrderStatus = async (id: string, status: OrderStatus) => {
   return order;
 };
 
+// Service: Cancel Order
+// Description: Cancels an order. Validates current status is PLACED or CONFIRMED before performing cancellation.
 const cancelOrder = async (id: string) => {
   const existingOrder = await OrderModel.findById(id);
 

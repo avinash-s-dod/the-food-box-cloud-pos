@@ -290,7 +290,7 @@ Runs the compiled production build.
 
 ## Phase 9
 
-* [ ] Swagger / OpenAPI Documentation
+* [x] Swagger / OpenAPI Documentation
 
 ## Phase 10
 

@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
+
+// Load environment variables from .env file
 dotenv.config();
 
+// Export loaded environment variables with defaults if missing
 export const env = {
     PORT: process.env.PORT || 5000,
     MONGO_URI: process.env.MONGO_URI || "",

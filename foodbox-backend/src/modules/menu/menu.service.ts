@@ -5,6 +5,8 @@ import { MenuModel } from "./menu.model.js";
 import type { CreateMenuInput, UpdateMenuInput } from "./menu.schema.js";
 import type { MenuQueryParams } from "./menu.types.js";
 
+// Service: Create Menu
+// Description: Verifies category exists, checks name uniqueness, and creates a menu item
 const createMenu = async (payload: CreateMenuInput) => {
   const category = await CategoryModel.findOne({
     _id: payload.category,
@@ -28,6 +30,8 @@ const createMenu = async (payload: CreateMenuInput) => {
   return menu;
 };
 
+// Service: Get Menus
+// Description: Queries active menu items using sorting, pagination, and matching queries
 const getMenus = async (queryParams?: MenuQueryParams) => {
   const features = new ApiFeatures(
     MenuModel.find({ isDeleted: false }),
@@ -44,6 +48,8 @@ const getMenus = async (queryParams?: MenuQueryParams) => {
   return { menus, paginationMeta };
 };
 
+// Service: Get Menu By ID
+// Description: Retrieves details of a specific active menu item
 const getMenuById = async (id: string) => {
   const menu = await MenuModel.findOne({ _id: id, isDeleted: false }).select(
     "-__v",
@@ -54,6 +60,8 @@ const getMenuById = async (id: string) => {
   return menu;
 };
 
+// Service: Update Menu By ID
+// Description: Updates properties of a menu item by ID. Validates new category and name uniqueness if supplied.
 const updateMenuById = async (id: string, payload: UpdateMenuInput) => {
   const currentMenu = await MenuModel.findOne({
     _id: id,
@@ -101,6 +109,8 @@ const updateMenuById = async (id: string, payload: UpdateMenuInput) => {
   return updatedMenu;
 };
 
+// Service: Delete Menu By ID
+// Description: Soft deletes a menu item, marking isDeleted as true and isAvailable as false
 const deleteMenuById = async (id: string) => {
   const deletedMenu = await MenuModel.findOneAndUpdate(
     { _id: id, isDeleted: false },

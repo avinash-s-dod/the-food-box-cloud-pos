@@ -7,6 +7,7 @@ import type {
 
 export type SettingsDocument = HydratedDocument<SettingsEntity>;
 
+// Sub-schema for Restaurant Daily Opening Status & Hours
 const openingDaySchema = new Schema<OpeningDay>(
   {
     isOpen: {
@@ -14,15 +15,16 @@ const openingDaySchema = new Schema<OpeningDay>(
       default: true,
     },
     openTime: {
-      type: String,
+      type: String, // format: "HH:MM" e.g., "09:00"
     },
     closeTime: {
-      type: String,
+      type: String, // format: "HH:MM" e.g., "22:00"
     },
   },
-  { _id: false },
+  { _id: false }, // Avoid creating separate _id keys for sub-documents
 );
 
+// Sub-schema for Restaurant Contact and Location Information
 const restaurantInfoSchema = new Schema<RestaurantInfo>(
   {
     name: {
@@ -44,6 +46,7 @@ const restaurantInfoSchema = new Schema<RestaurantInfo>(
   { _id: false },
 );
 
+// Mongoose Schema for singleton Restaurant Settings entity
 const settingsSchema = new Schema<SettingsEntity>(
   {
     deliveryCharge: {
@@ -60,12 +63,12 @@ const settingsSchema = new Schema<SettingsEntity>(
 
     openingHours: {
       type: Map,
-      of: openingDaySchema,
+      of: openingDaySchema, // Map of days (e.g. "Monday", "Tuesday") to openingDaySchema
       required: true,
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Automatically manages createdAt and updatedAt fields
   },
 );
 
