@@ -10,6 +10,7 @@ import {
 import { idParamSchema } from "../../common/common.schema.js";
 import { AdminRole } from "../admin/admin.types.js";
 import { CustomerRole } from "../customers/customer.types.js";
+import { authRateLimiter, publicApiRateLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 // Initialize Router for Order module
 const router = Router();
@@ -20,6 +21,7 @@ router.post(
   "/",
   authMiddleware([AdminRole.ADMIN, CustomerRole.USER]), // Validate role
   validate(createOrderSchema, "body"), // Validate order creation body fields
+  publicApiRateLimiter,
   OrderController.createOrder, // Handle placement
 );
 
