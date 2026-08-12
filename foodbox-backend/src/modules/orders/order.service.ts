@@ -86,7 +86,11 @@ const createOrder = async (payload: CreateOrderInput) => {
 
   const order = await OrderModel.create(orderPayload);
 
-  logger.info("Order created", { orderId: order._id, customerId: order.userId, grandTotal: order.grandTotal });
+  logger.info("Order created", {
+    orderId: order._id,
+    customerId: order.userId,
+    grandTotal: order.grandTotal,
+  });
 
   return order;
 };
@@ -167,7 +171,11 @@ const updateOrderStatus = async (id: string, status: OrderStatus) => {
     throw AppError.notFound("Order not found");
   }
 
-  logger.info("Order status changed", { orderId: order._id, previousStatus: existingOrder.orderStatus, newStatus: order.orderStatus });
+  logger.info("Order status changed", {
+    orderId: order._id,
+    previousStatus: existingOrder.orderStatus,
+    newStatus: order.orderStatus,
+  });
 
   return order;
 };

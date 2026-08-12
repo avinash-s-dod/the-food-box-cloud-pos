@@ -29,7 +29,11 @@ const createMenu = async (payload: CreateMenuInput) => {
 
   const menu = await MenuModel.create(payload);
 
-  logger.info("Menu item created", { menuId: menu._id, name: menu.name, categoryId: menu.category });
+  logger.info("Menu item created", {
+    menuId: menu._id,
+    name: menu.name,
+    categoryId: menu.category,
+  });
 
   return menu;
 };
@@ -114,10 +118,19 @@ const updateMenuById = async (id: string, payload: UpdateMenuInput) => {
     throw AppError.notFound("Menu item not found");
   }
 
-  logger.info("Menu item updated", { menuId: updatedMenu._id, name: updatedMenu.name });
+  logger.info("Menu item updated", {
+    menuId: updatedMenu._id,
+    name: updatedMenu.name,
+  });
 
-  if (payload.isAvailable !== undefined && payload.isAvailable !== currentMenu.isAvailable) {
-    logger.info("Menu item availability status changed", { menuId: updatedMenu._id, isAvailable: updatedMenu.isAvailable });
+  if (
+    payload.isAvailable !== undefined &&
+    payload.isAvailable !== currentMenu.isAvailable
+  ) {
+    logger.info("Menu item availability status changed", {
+      menuId: updatedMenu._id,
+      isAvailable: updatedMenu.isAvailable,
+    });
   }
 
   return updatedMenu;
@@ -136,7 +149,10 @@ const deleteMenuById = async (id: string) => {
     throw AppError.notFound("Menu item not found");
   }
 
-  logger.info("Menu item deleted", { menuId: deletedMenu._id, name: deletedMenu.name });
+  logger.info("Menu item deleted", {
+    menuId: deletedMenu._id,
+    name: deletedMenu.name,
+  });
 
   return deletedMenu;
 };

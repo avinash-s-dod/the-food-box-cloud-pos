@@ -294,8 +294,8 @@ Runs the compiled production build.
 
 ## Phase 10
 
+* [x] Logging
 * [ ] Production Readiness
-* [ ] Logging
 * [ ] Security Review
 * [ ] Error Handling Review
 * [ ] API Testing

@@ -12,6 +12,7 @@ import {
 import { idParamSchema } from "../../common/common.schema.js";
 import { AdminRole } from "../admin/admin.types.js";
 import { CustomerRole } from "./customer.types.js";
+import { authRateLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 // Initialize Router for Customer module
 const router = Router();
@@ -22,6 +23,7 @@ router.post(
   "/register",
   authMiddleware([AdminRole.ADMIN, CustomerRole.USER]),
   validate(createCustomerSchema, "body"), // Validate request body using schema
+  authRateLimiter,
   CustomerController.createCustomer,
 );
 
@@ -30,6 +32,7 @@ router.post(
 router.post(
   "/login",
   validate(customerLoginSchema, "body"), // Validate email/phone format
+  authRateLimiter,
   CustomerController.customerLogin,
 );
 
@@ -39,6 +42,7 @@ router.put(
   "/password",
   authMiddleware([CustomerRole.USER]),
   validate(changePasswordSchema, "body"),
+  authRateLimiter,
   CustomerController.changePassword,
 );
 
