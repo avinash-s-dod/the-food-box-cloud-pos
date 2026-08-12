@@ -12,6 +12,8 @@ import type {
 import type { CustomerQueryParams } from "./customer.types.js";
 import { ApiFeatures } from "../../common/ApiFeatures.js";
 
+// Service: Register Customer
+// Description: Checks if the phone or email is already registered, then saves the new customer profile
 const createCustomer = async (payload: CreateCustomerInput) => {
   const existingCustomer = await CustomerModel.findOne({
     isDeleted: false,
@@ -29,6 +31,8 @@ const createCustomer = async (payload: CreateCustomerInput) => {
   return customer;
 };
 
+// Service: Get Customers
+// Description: Filters, searches, and paginates customer documents
 const getCustomers = async (queryParams?: CustomerQueryParams) => {
   const features = new ApiFeatures(CustomerModel.find(), queryParams ?? {})
     .filter()
@@ -43,6 +47,8 @@ const getCustomers = async (queryParams?: CustomerQueryParams) => {
   return { customers, paginationMeta };
 };
 
+// Service: Customer Login
+// Description: Authenticates credentials using either email or phone and returns token
 const customerLogin = async (payload: CustomerLoginInput) => {
   const { email, phone, password } = payload;
 
@@ -76,6 +82,8 @@ const customerLogin = async (payload: CustomerLoginInput) => {
   };
 };
 
+// Service: Get Customer Profile
+// Description: Fetches profile data of customer by ID
 const getCustomerProfile = async (customerId: string) => {
   const customer =
     await CustomerModel.findById(customerId).select("-password -__v");
@@ -87,6 +95,8 @@ const getCustomerProfile = async (customerId: string) => {
   return customer;
 };
 
+// Service: Update Profile
+// Description: Updates basic profile fields of a customer
 const updateProfile = async (id: string, payload: UpdateCustomerInput) => {
   const updatedCustomer = await CustomerModel.findByIdAndUpdate(id, payload, {
     returnDocument: "after",
@@ -100,6 +110,8 @@ const updateProfile = async (id: string, payload: UpdateCustomerInput) => {
   return updatedCustomer;
 };
 
+// Service: Change Password
+// Description: Verifies current password and sets a new hashed password
 const changePassword = async (id: string, payload: ChangePasswordInput) => {
   const customer = await CustomerModel.findOne({
     _id: id,
@@ -132,13 +144,15 @@ const changePassword = async (id: string, payload: ChangePasswordInput) => {
 
   customer.password = payload.newPassword;
 
-  await customer.save();
+  await customer.save(); // pre-save middleware will automatically re-hash the new password
 
   return {
     message: "Password updated successfully",
   };
 };
 
+// Service: Delete Customer
+// Description: Soft deletes customer by marking isDeleted as true
 const deleteCustomer = async (id: string) => {
   const deletedCustomer = await CustomerModel.findOneAndUpdate(
     { _id: id, isDeleted: false },

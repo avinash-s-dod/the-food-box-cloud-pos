@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import type { Category } from "./category.types.js";
 
+// Mongoose Schema for Menu Category entity
 const categorySchema = new Schema<Category>(
   {
     name: {
@@ -18,15 +19,15 @@ const categorySchema = new Schema<Category>(
     },
     isActive: {
       type: Boolean,
-      default: true,
+      default: true, // Controls category visibility
     },
     isDeleted: {
       type: Boolean,
-      default: false,
+      default: false, // soft deletion flag
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Auto manages createdAt and updatedAt timestamps
   },
 );
 

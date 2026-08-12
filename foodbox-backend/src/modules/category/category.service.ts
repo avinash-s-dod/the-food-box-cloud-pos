@@ -7,6 +7,8 @@ import type {
 } from "./category.schema.js";
 import type { CategoryQueryParams } from "./category.types.js";
 
+// Service: Create Category
+// Description: Checks for duplicates by name, then creates a new Category in database
 const createCategory = async (payload: CreateCategoryInput) => {
   const existingCategory = await CategoryModel.findOne({
     name: payload.name,
@@ -22,6 +24,8 @@ const createCategory = async (payload: CreateCategoryInput) => {
   return category;
 };
 
+// Service: Get Categories
+// Description: Filters and queries active categories. Resolves search terms, sorting, and pagination
 const getCategories = async (queryParams?: CategoryQueryParams) => {
   const features = new ApiFeatures(
     CategoryModel.find({ isDeleted: false }),
@@ -40,6 +44,8 @@ const getCategories = async (queryParams?: CategoryQueryParams) => {
   return { categories, paginationMeta };
 };
 
+// Service: Get Category By ID
+// Description: Retrieves a single active category using its primary ID key
 const getCategoryById = async (id: string) => {
   const category = await CategoryModel.findOne({
     _id: id,
@@ -53,6 +59,8 @@ const getCategoryById = async (id: string) => {
   return category;
 };
 
+// Service: Update Category By ID
+// Description: Updates properties of a category by ID. If updating name, checks that it is unique.
 const updateCategoryById = async (id: string, payload: UpdateCategoryInput) => {
   if (payload.name) {
     const existingCategory = await CategoryModel.findOne({
@@ -81,6 +89,8 @@ const updateCategoryById = async (id: string, payload: UpdateCategoryInput) => {
   return updatedCategory;
 };
 
+// Service: Delete Category By ID
+// Description: Marks a category as soft-deleted (`isDeleted: true`) and makes it inactive
 const deleteCategoryById = async (id: string) => {
   const deletedCategory = await CategoryModel.findOneAndUpdate(
     { _id: id, isDeleted: false },

@@ -7,6 +7,7 @@ import { AdminRole, type AdminEntity } from "./admin.types.js";
 
 export type AdminDocument = HydratedDocument<AdminEntity>;
 
+// Mongoose Schema for Admin entity
 const adminSchema = new Schema<AdminEntity>(
   {
     name: {
@@ -26,7 +27,7 @@ const adminSchema = new Schema<AdminEntity>(
     password: {
       type: String,
       required: [true, "Password is required"],
-      select: false,
+      select: false, // Omit this field by default in database queries for safety
     },
 
     role: {
@@ -41,10 +42,12 @@ const adminSchema = new Schema<AdminEntity>(
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // Auto-manage createdAt and updatedAt fields
   },
 );
 
+// Mongoose Pre-Save Middleware
+// Description: Automatically hash the password using bcrypt before saving if it is new or modified
 adminSchema.pre("save", async function (this: AdminDocument) {
   if (!this.isModified("password")) return;
 

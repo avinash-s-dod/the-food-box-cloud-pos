@@ -5,6 +5,8 @@ import type {
   Response,
 } from "express";
 
+// Utility: catchAsync
+// Description: Wraps asynchronous Express route handlers to automatically catch any rejected promises and forward them to the error middleware
 export const catchAsync = <
   P = Record<string, string>,
   ResBody = unknown,
@@ -18,6 +20,6 @@ export const catchAsync = <
   ) => Promise<unknown>,
 ): RequestHandler<P, ResBody, ReqBody, ReqQuery> => {
   return (req, res, next) => {
-    fn(req, res, next).catch(next);
+    fn(req, res, next).catch(next); // catches any errors and invokes next(error)
   };
 };

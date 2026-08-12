@@ -9,6 +9,8 @@ import type {
 import { CustomerService } from "./customer.service.js";
 import type { CustomerQueryParams, CustomerParams } from "./customer.types.js";
 
+// Handler: Create Customer
+// Description: Registers a new customer and returns the created customer profile
 const createCustomer = catchAsync<
   Record<string, string>,
   unknown,
@@ -19,6 +21,8 @@ const createCustomer = catchAsync<
   return sendResponse(res, 201, "User registered successfully", result);
 });
 
+// Handler: Customer Login
+// Description: Auths customer credentials (phone/email & password) and returns JWT token & user profile
 const customerLogin = catchAsync<
   Record<string, string>,
   unknown,
@@ -29,12 +33,16 @@ const customerLogin = catchAsync<
   return sendResponse(res, 200, "User logged in successfully", customer);
 });
 
+// Handler: Get Customer Profile
+// Description: Retrieves profile details of customer by MongoDB ID
 const getCustomerProfile = catchAsync<CustomerParams>(async (req, res) => {
   const customer = await CustomerService.getCustomerProfile(req.params.id);
 
   return sendResponse(res, 200, "User details fetched successfully", customer);
 });
 
+// Handler: Get Customers
+// Description: Retrieves a filtered/paginated list of customer profiles
 const getCustomers = catchAsync<CustomerQueryParams>(async (req, res) => {
   const result = await CustomerService.getCustomers(req.query);
 
@@ -47,6 +55,8 @@ const getCustomers = catchAsync<CustomerQueryParams>(async (req, res) => {
   );
 });
 
+// Handler: Update Profile
+// Description: Updates editable profile fields of a customer profile
 const updateProfile = catchAsync<CustomerParams, unknown, UpdateCustomerInput>(
   async (req, res) => {
     const result = await CustomerService.updateProfile(req.params.id, req.body);
@@ -55,12 +65,16 @@ const updateProfile = catchAsync<CustomerParams, unknown, UpdateCustomerInput>(
   },
 );
 
+// Handler: Delete Customer
+// Description: Soft deletes a customer profile
 const deleteCustomer = catchAsync<CustomerParams>(async (req, res) => {
   const result = await CustomerService.deleteCustomer(req.params.id);
 
   return sendResponse(res, 200, "User deleted successfully", result);
 });
 
+// Handler: Change Password
+// Description: Verifies current password and updates it to the new requested password
 const changePassword = catchAsync<
   Record<string, string>,
   unknown,
