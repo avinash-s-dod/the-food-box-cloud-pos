@@ -6,20 +6,24 @@
  */
 import React, { useEffect } from 'react';
 import BootSplash from 'react-native-bootsplash';
-
-import SplashScreen from './src/screens/common/SplashScreen';
+import AppNavigator from './src/navigator/AppNavigator';
+import { StatusBar } from 'react-native';
 
 const App = () => {
-
-   useEffect(() => {
+  useEffect(() => {
     const hideBootSplash = async () => {
-      await BootSplash.hide({fade: true});
+      await BootSplash.hide({ fade: true },);
     };
 
     hideBootSplash();
   }, []);
 
-  return <SplashScreen />;
+  return (
+    <>
+      <StatusBar barStyle="light-content" />
+      <AppNavigator />
+    </>
+  );
 };
 
 export default App;
